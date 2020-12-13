@@ -1,0 +1,36 @@
+(define (my-sub xss n)
+  (if (= n 0)
+      '()
+      (cons (car xss) (my-sub (cdr xss) (- n 1)))))
+
+(define (ref xss idx . val)
+  (define (ref-get xss idx)
+    (cond
+      ((list? xss)
+       (and (> (length xss) idx)
+            (list-ref xss idx)))
+      ((vector? xss)
+       (and (> (vector-length xss) idx)
+            (vector-ref xss idx)))
+      ((string? xss)
+       (and (> (string-length xss) idx)
+            (string-ref xss idx)))))
+  
+  (define (list-insert xss idx val)
+    (append (my-sub xss idx) (list val) (list-tail xss idx)))
+  
+  (define (ref-insert xss idx val)
+    (cond
+      ((list? xss)
+       (and (>= (length xss) idx)
+            (list-insert xss idx val)))
+      ((vector? xss)
+       (and (>= (vector-length xss) idx)
+            (list->vector (list-insert (vector->list xss) idx val))))
+      ((string? xss)
+       (and (>= (string-length xss) idx)
+            (list->string (list-insert (string->list xss) idx val))))))
+  
+  (if (null? val)
+      (ref-get xss idx)
+      (ref-insert xss idx (car val))))

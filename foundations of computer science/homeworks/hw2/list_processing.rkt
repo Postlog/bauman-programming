@@ -1,0 +1,33 @@
+(define (my-flatten xs)
+  (if (list? xs)
+      (if (= (length xs) 1)
+          (my-flatten (car xs))
+          (append (my-flatten (car xs)) (my-flatten (cdr xs))))
+      (list xs)))
+
+(define (my-element? x xs)
+  (and (not (null? xs))
+       (or (equal? x (car xs)) (my-element? x (cdr xs)))))
+
+(define (my-range a b d)
+  (if (>= a b)
+      '()
+      (append (list a) (my-range (+ a d) b d))))
+
+(define (my-filter pred? xs)
+  (if (null? xs)
+      '()
+      (if (pred? (car xs))
+          (append (list (car xs)) (my-filter pred? (cdr xs)))
+          (my-filter pred? (cdr xs)))))
+
+(define (my-fold-left op xs)
+  (if (= (length xs) 1)
+      (car xs)
+      (my-fold-left op (cons (op (car xs) (cadr xs)) (cddr xs)))))
+
+(define (my-fold-right op xs)
+  (if (= (length xs) 1)
+      (car xs)
+      (op (car xs) (my-fold-right op (cdr xs)))))
+      
