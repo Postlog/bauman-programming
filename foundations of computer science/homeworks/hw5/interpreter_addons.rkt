@@ -1,5 +1,5 @@
 (define mactions '(+ - * / mod))
-(define bactions '(< > = and or))
+(define bactions '(< > =))
 (define (inc x) (+ x 1))
 (define (contains? xs x)
   (and (not (null? xs)) (or (equal? x (car xs)) (contains? (cdr xs) x))))
@@ -32,8 +32,10 @@
             ((number? word) (interpreter (inc index) (cons word stack) return-stack definitions))
             ((contains? mactions word) (interpreter (inc index) (maction word stack) return-stack definitions))
             ((contains? bactions word) (interpreter (inc index) (baction word stack) return-stack definitions))
+            ((equal? word 'and) (interpreter (inc index) (cons (if (and (= (car stack) -1) (= (cadr stack) -1)) -1 0) (cddr stack)) return-stack definitions))
+            ((equal? word 'or) (interpreter (inc index) (cons (if (or (= (car stack) -1) (= (cadr stack) -1)) -1 0) (cddr stack)) return-stack definitions))
             ((equal? word 'neg) (interpreter (inc index) (cons (- (car stack)) (cdr stack)) return-stack definitions))
-            ((equal? word 'not) (interpreter (inc index) (cons (if (= (car stack) 0) -1 0) cdr stack) return-stack definitions))
+            ((equal? word 'not) (interpreter (inc index) (cons (if (= (car stack) 0) -1 0) (cdr stack)) return-stack definitions))
             ((equal? word 'drop) (interpreter (inc index) (cdr stack) return-stack definitions))
             ((equal? word 'swap) (interpreter (inc index) (append (list (cadr stack) (car stack)) (cddr stack)) return-stack definitions))
             ((equal? word 'dup) (interpreter (inc index) (cons (car stack) stack) return-stack definitions))
@@ -48,6 +50,7 @@
             ((equal? word 'while) (if (zero? (car stack))
                                       (interpreter (inc (find-word 'end program index)) stack return-stack definitions)
                                       (interpreter (inc index) stack (cons index return-stack) definitions)))
+            ((equal? word 'endwh) (interpreter (car return-stack) stack (cdr return-stack) definitions))
             ((equal? word 'do) (interpreter (inc index) stack (cons index return-stack) definitions))
             ((equal? word 'until) (interpreter (if (zero? (car stack)) (inc index) (car return-stack)) stack (cdr return-stack) definitions))
             (else (interpreter (cadr (assoc word definitions)) stack (cons (inc index) return-stack) definitions)))))))
@@ -118,6 +121,6 @@ end
 234 8100 gcd    ) '())
 
 (interpret #( 0 swap while dup rot + swap 1 - end drop) '(10)) ; sum
-(interpret #( 1 swap do dup rot * swap 1 - until drop) '(1)) ; factorial
+(interpret #( 1 swap do dup rot * swap 1 - until drop) '(5)) ; factorial
 (interpret #( if 2 1 < if 3 endif endif) '(-1))
 (interpret #( if 1 2 < if 3 endif endif) '(-1))

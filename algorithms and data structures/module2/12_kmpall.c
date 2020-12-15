@@ -23,7 +23,9 @@ int KMP_all (char *str, char *sub, int **sub_idxs)
 	int p[sub_len];
 
 	prefix(sub, p, sub_len);
-
+	for(int i = 0; i < sub_len; i++)
+		printf("PREFIX[%i]=%i\n", i, p[i]);
+	printf("\n");
 	int *idxs = NULL,
 		c = 0;
 	for(int i = 0, j = 0; i < str_len; i++)
