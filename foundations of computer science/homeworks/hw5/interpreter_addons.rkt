@@ -48,11 +48,15 @@
             ((equal? word 'if) (interpreter (if (zero? (car stack)) (inc (find-word 'endif program index)) (inc index)) (cdr stack) return-stack definitions))
             ((equal? word 'endif) (interpreter (inc index) stack return-stack definitions))
             ((equal? word 'while) (if (zero? (car stack))
-                                      (interpreter (inc (find-word 'end program index)) stack return-stack definitions)
+                                      (interpreter (inc (find-word 'endwhile program index)) stack return-stack definitions)
                                       (interpreter (inc index) stack (cons index return-stack) definitions)))
-            ((equal? word 'endwh) (interpreter (car return-stack) stack (cdr return-stack) definitions))
+            ((equal? word 'endwhile) (interpreter (car return-stack) stack (cdr return-stack) definitions))
             ((equal? word 'do) (interpreter (inc index) stack (cons index return-stack) definitions))
             ((equal? word 'until) (interpreter (if (zero? (car stack)) (inc index) (car return-stack)) stack (cdr return-stack) definitions))
+            ((equal? word 'for) (if (<= (car stack) (cadr stack))
+                                    (interpreter (inc index) stack (cons index return-stack) definitions)
+                                    (interpreter (inc (find-word 'endfor program index)) (cddr stack) return-stack definitions)))
+            ((equal? word 'endfor) (interpreter (car return-stack) (cons (inc (car stack)) (cdr stack)) (cdr return-stack) definitions))
             (else (interpreter (cadr (assoc word definitions)) stack (cons (inc index) return-stack) definitions)))))))
 
 ; TESTS
@@ -120,7 +124,8 @@ end
 90 99 gcd
 234 8100 gcd    ) '())
 
-(interpret #( 0 swap while dup rot + swap 1 - end drop) '(10)) ; sum
+(interpret #( 0 swap while dup rot + swap 1 - endwhile drop) '(10)) ; sum
 (interpret #( 1 swap do dup rot * swap 1 - until drop) '(5)) ; factorial
 (interpret #( if 2 1 < if 3 endif endif) '(-1))
 (interpret #( if 1 2 < if 3 endif endif) '(-1))
+(interpret #(10 0 for dup rot swap endfor) '())
