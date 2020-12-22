@@ -29,5 +29,4 @@
 (define (my-fold-right op xs)
   (if (= (length xs) 1)
       (car xs)
-      (op (car xs) (my-fold-right op (cdr xs)))))
-      
+      (op (car xs) (my-fold-right op (cdr xs)))))      
