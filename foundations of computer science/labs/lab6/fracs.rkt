@@ -1,3 +1,10 @@
+(define force-return 0)
+(define (exit) (force-return #f))
+
+(call-with-current-continuation
+ (lambda (stack)
+   (set! force-return stack)))
+
 (define (my-eval exprs)
   (eval exprs (interaction-environment)))
 
@@ -32,7 +39,8 @@
           (let ((char (car lstr)) (other (cdr lstr)))
             (if (equal? char #\/)
                 (if (equal? stage 'numerator)
-                    (tokenize-loop other 'denominator))
+                    (tokenize-loop other 'denominator)
+                    (set-car! (cdr (assoc stage tokens)) '()))
                 (if (numeric? char)
                     (begin (set-car! (cdr (assoc stage tokens)) (append (cadr (assoc stage tokens)) (list char)))
                            (tokenize-loop other stage))
@@ -41,7 +49,6 @@
 
 (define (check-frac str)
   (let ((tokens (tokenize-frac (string->list str))))
-    
     (and (not (null? (dict-ref tokens 'numerator)))
          (not (null? (dict-ref tokens 'denominator))))))
 
@@ -68,13 +75,28 @@
             (loop fracs (string-append it-frac (string (car lstr))) (cdr lstr))))))
 
 (define (scan-many-fracs str)
-  (define (inner str)
-    (let loop ((str-fracs (split-fracs str)))
-      (if (null? str-fracs) '()
-          (let ((scanned-frac (scan-frac (car str-fracs))))
-            (if scanned-frac
-                (cons scanned-frac (loop (cdr str-fracs)))
-                (list scanned-frac))))))
-  (let ((scanned-fracs (inner str)))
-    (and (last scanned-fracs) scanned-fracs)))
+  (let loop ((str-fracs (split-fracs str)))
+    (if (null? str-fracs) '()
+        (let ((scanned-frac (scan-frac (car str-fracs))))
+          (if (not scanned-frac) (exit)
+              (cons scanned-frac (loop (cdr str-fracs))))))))
+
+; TESTS
+
+(check-frac "110/111")
+(check-frac "-4/3") 
+(check-frac "+5/10")
+(check-frac "5.0/10")
+(check-frac "FF/10")
+
+(scan-frac "110/111")  
+(scan-frac "-4/3")     
+(scan-frac "+5/10")    
+(scan-frac "5.0/10")   
+(scan-frac "FF/10")    
+
+(scan-many-fracs
+ "\t1/2 1/3\n\n10/8")  
+(scan-many-fracs
+ "\t1/2 1/3\n\n2/-5")  
             

@@ -63,6 +63,22 @@
   (define (inc) (set! index (+ 1 index)))
   (define (in-bounds?) (< index (length tokens)))
   (define (current) (list-ref tokens index))
+
+  (define (only-close-brackets?)
+    (let loop ((index index))
+      (or (= index (length tokens))
+          (and (equal? (list-ref tokens index) ")")
+               (loop (+ index 1))))))
+
+  (define (has-close-bracket?)
+    (let loop ((index index) (offset 0))
+      (if (= index (length tokens)) #f
+          (let ((current (list-ref tokens index)))
+            (cond
+              ((and (equal? current ")") (zero? offset)))
+              ((equal? current "(") (loop (+ index 1) (+ offset 1)))
+              ((equal? current ")") (loop (+ index 1) (- offset 1)))
+              (else (loop (+ index 1) offset)))))))
   
   (define (expression)
     (let loop ((T (term)))
@@ -71,7 +87,7 @@
             (inc)
             (if (not (in-bounds?)) (exit))
             (loop (list T op (term))))
-          T)))
+          (if (not (only-close-brackets?)) (exit) T))))
         
   (define (term)
     (let loop ((F (factor)))
@@ -94,7 +110,9 @@
       (inc)
       (cond
         ((equal? current '-) (list '- (power)))
-        ((equal? current "(") (expression))
+        ((equal? current "(") (if (has-close-bracket?)
+                                  (expression)
+                                  (exit)))
         ((number? current) current)
         ((symbol? current) current)
         (else (exit)))))
@@ -105,6 +123,6 @@
   (if (and (list? tree) (= (length tree) 3))
       (let ((a (car tree)) (op (cadr tree)) (b (caddr tree)))
         (let ((op (if (equal? op '^) 'expt op)))
-            (list op (tree->scheme a) (tree->scheme b))))
+          (list op (tree->scheme a) (tree->scheme b))))
       tree))
       

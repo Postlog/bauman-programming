@@ -1,15 +1,21 @@
 (define mactions '(+ - * / mod))
 (define bactions '(< > =))
+
 (define (inc x) (+ x 1))
+
 (define (contains? xs x)
   (and (not (null? xs)) (or (equal? x (car xs)) (contains? (cdr xs) x))))
+
 (define (my-eval exprs)
   (eval exprs (interaction-environment)))
+
 (define (find-word token program index)
   (if (equal? (vector-ref program index) token)
       index
       (find-word token program (inc index))))
+
 (define (pass x) x)
+
 (define (action-helper aliases action stack)
   (let ((aliased-action (assoc action aliases)))
     (if aliased-action
@@ -18,11 +24,14 @@
                          (list (cadr aliased-action) (list 'quote stack))
                          (list (caddr aliased-action) (list 'quote stack)))))
         (my-eval (list action (cadr stack) (car stack))))))
+
 (define (maction action stack)
   (define aliases (list (list 'mod '(remainder cadr car))))
   (cons (action-helper aliases action stack) (cddr stack)))
+
 (define (baction action stack)
   (cons (if (action-helper '() action stack) -1 0) (cddr stack)))
+
 (define (interpret program init-stack)
   (let interpreter ((index 0) (stack init-stack) (return-stack '()) (definitions '()))
     (if (= index (vector-length program))
