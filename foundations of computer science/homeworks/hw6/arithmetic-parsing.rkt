@@ -1,9 +1,7 @@
 (define force-return 0)
-(define (exit) (force-return #f))
-
-(call-with-current-continuation
- (lambda (stack)
-   (set! force-return stack)))
+(define (exit reason)
+  ; (display reason) (newline)
+  (force-return #f))
 
 (define (push xs x)
   (append xs (list x)))
@@ -64,12 +62,6 @@
   (define (in-bounds?) (< index (length tokens)))
   (define (current) (list-ref tokens index))
 
-  (define (only-close-brackets?)
-    (let loop ((index index))
-      (or (= index (length tokens))
-          (and (equal? (list-ref tokens index) ")")
-               (loop (+ index 1))))))
-
   (define (has-close-bracket?)
     (let loop ((index index) (offset 0))
       (if (= index (length tokens)) #f
@@ -85,9 +77,11 @@
       (if (and (in-bounds?) (or (equal? (current) '-) (equal? (current) '+)))
           (let ((op (current)))
             (inc)
-            (if (not (in-bounds?)) (exit))
+            (if (not (in-bounds?)) (exit "expr1"))
             (loop (list T op (term))))
-          (if (not (only-close-brackets?)) (exit) T))))
+          (if (and (in-bounds?) (not (equal? (current) ")")))
+              (exit "expr2")
+              (begin (inc) T)))))
         
   (define (term)
     (let loop ((F (factor)))
@@ -105,19 +99,22 @@
           P)))
 
   (define (power)
-    (if (not (in-bounds?))(exit))
+    (if (not (in-bounds?))(exit "power1"))
     (let ((current (current)))
       (inc)
       (cond
         ((equal? current '-) (list '- (power)))
         ((equal? current "(") (if (has-close-bracket?)
                                   (expression)
-                                  (exit)))
+                                  (exit "power2")))
         ((number? current) current)
         ((symbol? current) current)
-        (else (exit)))))
-            
-  (expression))
+        (else (exit "power3")))))
+
+  (call-with-current-continuation
+   (lambda (stack)
+     (set! force-return stack)
+     (expression))))
 
 (define (tree->scheme tree)
   (if (and (list? tree) (= (length tree) 3))

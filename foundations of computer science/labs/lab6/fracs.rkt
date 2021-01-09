@@ -1,10 +1,6 @@
 (define force-return 0)
 (define (exit) (force-return #f))
 
-(call-with-current-continuation
- (lambda (stack)
-   (set! force-return stack)))
-
 (define (my-eval exprs)
   (eval exprs (interaction-environment)))
 
@@ -75,11 +71,14 @@
             (loop fracs (string-append it-frac (string (car lstr))) (cdr lstr))))))
 
 (define (scan-many-fracs str)
-  (let loop ((str-fracs (split-fracs str)))
-    (if (null? str-fracs) '()
-        (let ((scanned-frac (scan-frac (car str-fracs))))
-          (if (not scanned-frac) (exit)
-              (cons scanned-frac (loop (cdr str-fracs))))))))
+  (call-with-current-continuation
+   (lambda (stack)
+     (set! force-return stack)
+     (let loop ((str-fracs (split-fracs str)))
+       (if (null? str-fracs) '()
+           (let ((scanned-frac (scan-frac (car str-fracs))))
+             (if (not scanned-frac) (exit)
+                 (cons scanned-frac (loop (cdr str-fracs))))))))))
 
 ; TESTS
 

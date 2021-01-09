@@ -1,5 +1,7 @@
 (define force-return 0)
-(define (exit) (force-return #f))
+(define (exit reason)
+  ; (display reason) (newline)
+  (force-return #f))
 
 (define (find-tail xs target)
   (if (equal? (car xs) target)
@@ -18,14 +20,15 @@
   (list-ref xs (- (length xs) 1)))
 
 (define (tail-endif program)
-  (let loop ((program program) (offset -1))
+  (let loop ((program program) (depth -1))
+    
     (if (null? program) #f
         (let ((word (car program)))
           (cond
-            ((and (equal? word 'endif) (zero? offset)) (cdr program))
-            ((equal? word 'endif) (loop (cdr program) (- 1 offset)))
-            ((equal? word 'if) (loop (cdr program) (+ 1 offset)))
-            (else (loop (cdr program) offset)))))))
+            ((and (equal? word 'endif) (zero? depth)) (cdr program))
+            ((equal? word 'endif) (loop (cdr program) (- depth 1)))
+            ((equal? word 'if) (loop (cdr program) (+ depth 1)))
+            (else (loop (cdr program) depth)))))))
 
 (define (push xs x)
   (append xs (list x)))
@@ -52,10 +55,10 @@
     (if (not (null? program))
         (let ((word (car program)) (other (cdr program)))
           (if (equal? word 'define)
-              (if (null? other) (exit)
-                  (if (member (car other) '(if endif)) (exit)
+              (if (null? other) (exit "articles1")
+                  (if (member (car other) '(if endif)) (exit "articles2")
                       (let ((head (find-head (cdr other) 'end)))
-                        (if (not head) (exit)
+                        (if (not head) (exit "article31")
                             (cons (cons (car other) (list (parse-body head)))
                                   (loop (find-tail (cdr other) 'end)))))))
               (list program)))
@@ -68,13 +71,13 @@
           (cond
             ((equal? word 'if)
              (let ((tail (tail-endif program)))
-               (if (not tail) (exit)
+               (if (not tail) (exit "body1")
                    (loop tail (push parsed (list 'if (loop (cdr program) '() (cons 'if stack)))) stack))))
             ((equal? word 'endif)
              (if (and (not (null? stack)) (equal? (car stack) 'if))
                  parsed
-                 (exit)))
-            ((member word '(define end)) (exit))
+                 (exit "body2")))
+            ((member word '(define end)) (exit "body3"))
             (else (loop (cdr program) (push parsed word) stack))))
         parsed)))
 
