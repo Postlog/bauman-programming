@@ -65,6 +65,16 @@ void tree_update(int *tree, int n, int a, char *substr)
     }
 }
 
+int ACTIONS_COUNT = 2;
+char *ACTIONS[] = {"HD", "UPD"};
+
+int action_index(char *action)
+{
+    for(int i = 0; i < ACTIONS_COUNT; i++)
+        if(strcmp(action, ACTIONS[i]) == 0) return i;
+    return -1;
+}
+
 void main()
 {
     char str[1000000];
@@ -94,20 +104,20 @@ void main()
     {
         char action[4];
         scanf("%s", action);
-        
-        if(strcmp(action, "HD") == 0)
+        int index = action_index(action), a, b;
+        char s[1000000];
+
+        scanf("%d", &a);
+        switch(index)
         {
-            int a, b;
-            scanf("%d %d", &a, &b);
-            printf("%s\n", tree_satisfy(T, power, a, b) ? "YES" : "NO");
-        }
-        else
-        {
-            int a;
-            scanf("%d", &a);
-            char s[1000000];
-            scanf("%s", s);
-            tree_update(T, power, a, s);
+            case 0:
+                scanf("%d", &b);
+                printf("%s\n", tree_satisfy(T, power, a, b) ? "YES" : "NO");
+                break;
+            case 1:
+                scanf("%s", s);
+                tree_update(T, power, a, s);
+                break;
         }
     }
     free(v);
