@@ -3,8 +3,14 @@
 
 typedef struct PriorityQueueUnit PriorityQueueUnit;
 typedef struct PriorityQueue PriorityQueue;
+typedef struct Task Task;
 
 int INT_MIN = -2147483647 - 1;
+
+struct Task
+{
+    int start_time, duration;
+};
 
 struct PriorityQueueUnit
 {
@@ -91,16 +97,27 @@ int main() {
 
     int k;
     scanf("%d", &k);
+
+    Task tasks[k];
+    for(int i = 0; i < k; i++)
+    {
+        int start_time, duration;
+        scanf("%d %d", &start_time, &duration);
+        tasks[i].start_time = start_time;
+        tasks[i].duration = duration;
+    }
+    
+
     int max_total_time = 0;
     for(int i = 0; i < k; i++)
     {
-        int start_time, working_time;
-        scanf("%d %d", &start_time, &working_time);
-
+        
+        Task task = tasks[i];
         int total_time = pop(&queue).value;
-        if (start_time > total_time) total_time = start_time;
+        if (task.start_time > total_time)
+            total_time = task.start_time;
 
-        total_time += working_time;
+        total_time += task.duration;
         if (max_total_time < total_time) max_total_time = total_time;
 
         PriorityQueueUnit unit;
