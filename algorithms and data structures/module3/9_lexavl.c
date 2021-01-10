@@ -7,7 +7,7 @@ typedef struct Node Node;
 struct Node
 {
     int value, balance;
-    char *key;
+    unsigned long key;
     Node *parent, *left, *right;
 };
 
@@ -16,11 +16,11 @@ typedef struct Tree
     Node *root;
 } Tree;
 
-Node *tree_find_node(Tree *tree, char *key)
+Node *tree_find_node(Tree *tree, unsigned long key)
 {
     Node *x = tree->root;
 
-    while (x != NULL && strcmp(x->key, key) != 0)
+    while (x != NULL && x->key != key)
     {
         if (key < x->key) x = x->left;
         else x = x->right;
@@ -28,7 +28,7 @@ Node *tree_find_node(Tree *tree, char *key)
     return x;
 }
 
-void tree_insert_node(Tree *tree, char *key, int value)
+void tree_insert_node(Tree *tree, unsigned long key, int value)
 {
     Node *y = (Node*) malloc(sizeof(Node));
     y->parent = NULL; y->left = NULL; y->right = NULL;
@@ -89,7 +89,6 @@ void tree_clear_node(Node *node)
     {
         if(node->left) tree_clear_node(node->left);
         if(node->right) tree_clear_node(node->right);  
-        free(node->key);
         free(node);
     }
 }
@@ -140,7 +139,7 @@ Node *avl_tree_rotate_right(Tree *tree, Node *x)
         y->balance = y->balance + x->balance;
 }
 
-Node *avl_tree_insert_node(Tree *tree, char *key, int value)
+Node *avl_tree_insert_node(Tree *tree, unsigned long key, int value)
 {
     tree_insert_node(tree, key, value);
     
@@ -176,6 +175,17 @@ Node *avl_tree_insert_node(Tree *tree, char *key, int value)
         }
     }
     return a;
+}
+
+unsigned long hash(char *str)
+{
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c;
+
+    return hash;
 }
 
 int SPEC_COUNT = 6;
@@ -240,11 +250,12 @@ void main()
                 word[j++] = *(str++);
 
             word[j] = '\0';
-            int found = tree_find_node(&tree, word) != NULL;
+            unsigned long word_hash = hash(word);
+            int found = tree_find_node(&tree, word_hash) != NULL;
             if(!found)
-                avl_tree_insert_node(&tree, word, current_ident_id++);
+                avl_tree_insert_node(&tree, word_hash, current_ident_id++);
 
-            printf("IDENT %d\n", tree_find_node(&tree, word)->value);
+            printf("IDENT %d\n", tree_find_node(&tree, word_hash)->value);
 
             if(found) free(word);
         }
