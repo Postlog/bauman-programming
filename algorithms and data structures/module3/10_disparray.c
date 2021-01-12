@@ -32,7 +32,7 @@ Node *tree_find_node(Tree *tree, int key)
 	return node;
 }
 
-void tree_insert(Tree *tree, int key, int value)
+void tree_insert_node(Tree *tree, int key, int value)
 {
 	Node *new_node = (Node *)malloc(sizeof(Node));
 	new_node->key = key;
@@ -71,17 +71,17 @@ void tree_insert(Tree *tree, int key, int value)
 	}
 }
 
-void clear_subtree(Node *node)
+void tree_clear_node(Node *node)
 {
-	if(node->left) clear_subtree(node->left);
-	if(node->right) clear_subtree(node->right);
+	if(node->left) tree_clear_node(node->left);
+	if(node->right) tree_clear_node(node->right);
 	free(node);
 }
 
-void clear_tree(Tree tree)
+void tree_clear(Tree tree)
 {
 	if(tree.root)
-		clear_subtree(tree.root);
+		tree_clear_node(tree.root);
 }
 
 void hash_table_init(HashTable *t, int size)
@@ -96,9 +96,9 @@ void hash_table_init(HashTable *t, int size)
 	}
 }
 
-void clear_hash_table(HashTable t)
+void hash_table_clear(HashTable t)
 {
-	for(int i = 0; i < t.size; i++) clear_tree(t.tree_table[i]);
+	for(int i = 0; i < t.size; i++) tree_clear(t.tree_table[i]);
 	free(t.tree_table);
 }
 
@@ -117,7 +117,7 @@ void assign(HashTable *t, int key, int value)
 	Tree *tree = &t->tree_table[hash];
 	Node *node = tree_find_node(tree, key);
 	if(node) node->value = value;
-    else tree_insert(tree, key, value);
+    else tree_insert_node(tree, key, value);
 }
 
 void main() {
@@ -145,5 +145,5 @@ void main() {
         }
     }
 
-    clear_hash_table(table);
+    hash_table_clear(table);
 }

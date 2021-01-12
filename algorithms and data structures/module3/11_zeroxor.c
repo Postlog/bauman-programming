@@ -26,7 +26,7 @@ Node *tree_find_node(Tree *tree, int key)
     return node;
 }
 
-Node *tree_insert(Tree *tree, int key, int value)
+Node *tree_insert_node(Tree *tree, int key, int value)
 {
     Node *new_node = (Node *)malloc(sizeof(Node));
     new_node->key = key;
@@ -67,17 +67,17 @@ Node *tree_insert(Tree *tree, int key, int value)
     return new_node;
 }
 
-void clear_subtree(Node *node)
+void tree_clear_node(Node *node)
 {
-    if(node->left) clear_subtree(node->left);
-    if(node->right) clear_subtree(node->right);
+    if(node->left) tree_clear_node(node->left);
+    if(node->right) tree_clear_node(node->right);
     free(node);
 }
 
-void clear_tree(Tree tree)
+void tree_clear(Tree tree)
 {
     if(tree.root)
-        clear_subtree(tree.root);
+        tree_clear_node(tree.root);
 }
 
 void main()
@@ -97,7 +97,7 @@ void main()
         sum ^= x;
 
         Node *node = tree_find_node(&tree, sum);
-        if(!node) node = tree_insert(&tree, sum, 0);
+        if(!node) node = tree_insert_node(&tree, sum, 0);
         node->value++;
 
         if(sum == 0) count += node->value; 
@@ -106,5 +106,5 @@ void main()
 
     printf("%d\n", count);
     
-    clear_tree(tree);
+    tree_clear(tree);
 }

@@ -14,20 +14,20 @@ struct Stack
 	struct Task *data;
 };
 
-void init_stack(struct Stack *s, int n)
+void stack_init(struct Stack *s, int n)
 {
 	s->data = (struct Task *)malloc(sizeof(struct Task) * n);
 	s->capacity = n;
 	s->top = 0;
 }
 
-void push(struct Stack *s, struct Task x)
+void stack_push(struct Stack *s, struct Task x)
 {
 	s->data[s->top] = x;
 	s->top++;
 }
 
-struct Task pop(struct Stack *s)
+struct Task stack_pop(struct Stack *s)
 {
 	s->top--;
 	return s->data[s->top];
@@ -64,15 +64,15 @@ int partition(int *a, int low, int high)
 void quicksort_stack(int *a, int n)
 {
 	struct Stack tasks;
-	init_stack(&tasks, n);
+	stack_init(&tasks, n);
 	struct Task init_task;
 	init_task.low = 0;
 	init_task.high = n - 1;
-	push(&tasks, init_task);
+	stack_push(&tasks, init_task);
 
 	while(!stack_empty(tasks))
 	{
-		struct Task task = pop(&tasks);
+		struct Task task = stack_pop(&tasks);
 		int low = task.low,
 			high = task.high;
 		if(low < high)
@@ -81,11 +81,11 @@ void quicksort_stack(int *a, int n)
 			int q = partition(a, low, high);
 			new_task.low = q + 1;
 			new_task.high = high;
-			push(&tasks, new_task);
+			stack_push(&tasks, new_task);
 
 			new_task.low = low;
 			new_task.high = q - 1;
-			push(&tasks, new_task);
+			stack_push(&tasks, new_task);
 		}
 	}
 	free(tasks.data);

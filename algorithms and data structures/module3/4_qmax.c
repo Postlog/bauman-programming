@@ -12,7 +12,7 @@ struct DoubleStack
 	int *data;
 };
 
-void init_double_stack(struct DoubleStack *ds, int n)
+void double_stack_init(struct DoubleStack *ds, int n)
 {
 	ds->capacity = n;
 	ds->top_1 = 0;
@@ -20,41 +20,41 @@ void init_double_stack(struct DoubleStack *ds, int n)
 	ds->data = (int *)malloc(sizeof(int) * n);
 }
 
-void push_1(struct DoubleStack *ds, int x)
+void double_stack_push_1(struct DoubleStack *ds, int x)
 {
 	ds->data[ds->top_1] = x;
 	ds->top_1++;
 }
 
-void push_2(struct DoubleStack *ds, int x)
+void double_stack_push_2(struct DoubleStack *ds, int x)
 {
 	ds->data[ds->top_2] = x;
 	ds->top_2--;
 }
 
-int pop_1(struct DoubleStack *ds)
+int double_stack_pop_1(struct DoubleStack *ds)
 {
 	ds->top_1--;
 	return ds->data[ds->top_1];
 }
 
-int pop_2(struct DoubleStack *ds)
+int double_stack_pop_2(struct DoubleStack *ds)
 {
 	ds->top_2++;
 	return ds->data[ds->top_2];
 }
 
-int empty_1(struct DoubleStack ds)
+int double_stack_empty_1(struct DoubleStack ds)
 {
 	return ds.top_1 == 0;
 }
 
-int empty_2(struct DoubleStack ds)
+int double_stack_empty_2(struct DoubleStack ds)
 {
 	return ds.top_2 == ds.capacity - 1;
 }
 
-void clear_double_stack(struct DoubleStack *ds)
+void double_stack_clear(struct DoubleStack *ds)
 {
 	free(ds->data);
 	ds->data = NULL;
@@ -63,18 +63,18 @@ void clear_double_stack(struct DoubleStack *ds)
 	ds->top_2 = -1;
 }
 
-void init_queue_on_stack(struct DoubleStack *ds, int n)
+void queue_on_stack_init(struct DoubleStack *ds, int n)
 {
-	init_double_stack(ds, n);
+	double_stack_init(ds, n);
 }
 
 void enqueue(struct DoubleStack *ds, int x, int *max)
 {
 	if(x > *max) *max = x;
-	push_1(ds, x);
+	double_stack_push_1(ds, x);
 }
 
-void recalculate_max(struct DoubleStack *ds, int *max)
+void queue_on_stack_recalculate_max(struct DoubleStack *ds, int *max)
 {
 	*max = INT_MIN;
 		
@@ -89,18 +89,18 @@ void recalculate_max(struct DoubleStack *ds, int *max)
 
 int dequeue(struct DoubleStack *ds, int *max)
 {
-	if(empty_2(*ds) == 1)
+	if(double_stack_empty_2(*ds) == 1)
 	{
-		while(empty_1(*ds) != 1)
+		while(double_stack_empty_1(*ds) != 1)
 		{
-			int a = pop_1(ds);
+			int a = double_stack_pop_1(ds);
 			if(a > *max) *max = a;
-			push_2(ds, a);
+			double_stack_push_2(ds, a);
 		}
 	}
-	int dequeued = pop_2(ds);
+	int dequeued = double_stack_pop_2(ds);
 	if(dequeued == *max)
-		recalculate_max(ds, max);
+		queue_on_stack_recalculate_max(ds, max);
 
 	return dequeued;
 }
@@ -120,7 +120,7 @@ void main()
 	int n;
 	scanf("%d", &n);
 	struct DoubleStack stack;
-	init_double_stack(&stack, 2 * n);
+	double_stack_init(&stack, 2 * n);
 	int max = INT_MIN;
 	for(int i = 0; i < n; i++)
 	{
@@ -141,10 +141,10 @@ void main()
 				printf("%d\n", max);
 				break;
 			case 3:
-				printf("%s\n", empty_1(stack) && empty_2(stack) ? "true" : "false");
+				printf("%s\n", double_stack_empty_1(stack) && double_stack_empty_2(stack) ? "true" : "false");
 				break;
 		}
 
 	}
-	clear_double_stack(&stack);
+	double_stack_clear(&stack);
 }

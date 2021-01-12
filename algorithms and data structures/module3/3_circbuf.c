@@ -11,7 +11,7 @@ struct CircleBuffer
 	int tail;
 };
 
-void init_queue(struct CircleBuffer *cb, int n)
+void queue_init(struct CircleBuffer *cb, int n)
 {
 	cb->data = (int *)malloc(sizeof(int) * n);
 	cb->capacity = n;
@@ -63,7 +63,7 @@ void main()
 	int n;
 	scanf("%d", &n);
 	struct CircleBuffer buffer;
-	init_queue(&buffer, 4);
+	queue_init(&buffer, 4);
 
 	for(int i = 0; i < n; i++)
 	{

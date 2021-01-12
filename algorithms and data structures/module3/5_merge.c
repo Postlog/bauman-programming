@@ -27,7 +27,7 @@ void swap(PriorityQueueUnit *a, PriorityQueueUnit *b)
     *b = t;
 }
 
-int sift_down(PriorityQueueUnit *list, int size) {
+int priority_queue_sift_down(PriorityQueueUnit *list, int size) {
     int capacity = 0, i = 0;
     while (i < size / 2)
     {
@@ -48,22 +48,22 @@ int sift_down(PriorityQueueUnit *list, int size) {
     return capacity;
 }
 
-void init_priority_queue(PriorityQueue *q, int capacity)
+void priority_queue_init(PriorityQueue *q, int capacity)
 {
     q->capacity = capacity;
     q->count = 0;
     q->heap = (PriorityQueueUnit *)malloc(sizeof(PriorityQueueUnit) * capacity);
 }
 
-PriorityQueueUnit pop(PriorityQueue *q)
+PriorityQueueUnit priority_queue_pop(PriorityQueue *q)
 {
     PriorityQueueUnit x = q->heap[0];
     q->heap[0].priority = INT_MIN;
-    q->count = sift_down(q->heap, q->capacity);
+    q->count = priority_queue_sift_down(q->heap, q->capacity);
     return x;
 }
 
-void insert(PriorityQueue *q, PriorityQueueUnit value)
+void priority_queue_push(PriorityQueue *q, PriorityQueueUnit value)
 {
     int i = q->count;
     q->heap[i] = value;
@@ -87,7 +87,7 @@ int main() {
         total_size += size;
     }
     PriorityQueue queue;
-    init_priority_queue(&queue, total_size);
+    priority_queue_init(&queue, total_size);
 
     for(int i = 0; i < total_size; i++)
     {
@@ -98,11 +98,11 @@ int main() {
         unit.value = val;
         unit.priority = -val;
 
-        insert(&queue, unit);
+        priority_queue_push(&queue, unit);
     }
 
     for(int i = 0; i < total_size; i++)
-        printf("%d ", pop(&queue).value);
+        printf("%d ", priority_queue_pop(&queue).value);
     printf("\n");
     free(queue.heap);
 }

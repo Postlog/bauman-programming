@@ -41,6 +41,7 @@ void tree_insert_node(Tree *tree, unsigned long key, int value)
         tree->root = new_node;
         return;
     }
+    
     Node *node = tree->root;
     for (;;)
     {

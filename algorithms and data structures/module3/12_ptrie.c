@@ -20,7 +20,7 @@ typedef struct Tree
 
 const int ALPHABET_LETTERS_COUNT = 26;
 
-void build_node(Node *node)
+void node_init(Node *node)
 {
     node->children = (Node **)malloc(sizeof(Node *) * ALPHABET_LETTERS_COUNT);
 
@@ -60,7 +60,7 @@ void tree_insert_word(Tree *tree, char *str)
         if(!node->children[idx])
         {
             Node *new_node = (Node *)malloc(sizeof(Node));
-            build_node(new_node);
+            node_init(new_node);
             new_node->parent = node;
             node->children[idx] = new_node;
         }
@@ -120,7 +120,7 @@ int action_index(char *action)
 int main() {
     Tree tree;
     Node *node = (Node *)malloc(sizeof(Node));
-    build_node(node);
+    node_init(node);
     tree.root = node;
     
     int n;

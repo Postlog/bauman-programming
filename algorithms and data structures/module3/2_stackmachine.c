@@ -9,20 +9,20 @@ struct Stack
 	int *data;
 };
 
-void init_stack(struct Stack *s, int n)
+void stack_init(struct Stack *s, int n)
 {
 	s->data = (int *)malloc(sizeof(int) * n);
 	s->capacity = n;
 	s->top = 0;
 }
 
-void push(struct Stack *s, int x)
+void stack_push(struct Stack *s, int x)
 {
 	s->data[s->top] = x;
 	s->top++;
 }
 
-int pop(struct Stack *s)
+int stack_pop(struct Stack *s)
 {
 	s->top--;
 	return s->data[s->top];
@@ -43,7 +43,7 @@ void main()
 	int n;
 	scanf("%d", &n);
 	struct Stack stack;
-	init_stack(&stack, n);
+	stack_init(&stack, n);
 
 	for(int i = 0; i < n; i++)
 	{
@@ -57,64 +57,64 @@ void main()
 		{
 			case 0:
 				scanf("%d", &x);
-				push(&stack, x);
+				stack_push(&stack, x);
 				break;
 			case 1:
-				a = pop(&stack);
-				b = pop(&stack);
-				push(&stack, a + b);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
+				stack_push(&stack, a + b);
 				break;
 			case 2:
-				a = pop(&stack);
-				b = pop(&stack);
-				push(&stack, a - b);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
+				stack_push(&stack, a - b);
 				break;
 			case 3:
-				a = pop(&stack);
-				b = pop(&stack);
-				push(&stack, a * b);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
+				stack_push(&stack, a * b);
 				break;
 			case 4:
-				a = pop(&stack);
-				b = pop(&stack);
-				push(&stack, a / b);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
+				stack_push(&stack, a / b);
 				break;
 			case 5:
-				a = pop(&stack);
-				b = pop(&stack);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
 				if(a > b)
-					push(&stack, a);
+					stack_push(&stack, a);
 				else
-					push(&stack, b);
+					stack_push(&stack, b);
 				break;
 			case 6:
-				a = pop(&stack),
-				b = pop(&stack);
+				a = stack_pop(&stack),
+				b = stack_pop(&stack);
 				if(a < b)
-					push(&stack, a);
+					stack_push(&stack, a);
 				else
-					push(&stack, b);
+					stack_push(&stack, b);
 				break;
 			case 7:
-				a = pop(&stack);
+				a = stack_pop(&stack);
 				
-				push(&stack, -a);
+				stack_push(&stack, -a);
 				break;
 			case 8:
-				a = pop(&stack);
+				a = stack_pop(&stack);
 				
-				push(&stack, a);
-				push(&stack, a);
+				stack_push(&stack, a);
+				stack_push(&stack, a);
 				break;
 			case 9:
-				a = pop(&stack);
-				b = pop(&stack);
+				a = stack_pop(&stack);
+				b = stack_pop(&stack);
 				
-				push(&stack, a);
-				push(&stack, b);
+				stack_push(&stack, a);
+				stack_push(&stack, b);
 				break;
 		}
 	}
-	printf("%i\n", pop(&stack));
+	printf("%i\n", stack_pop(&stack));
 	free(stack.data);
 }

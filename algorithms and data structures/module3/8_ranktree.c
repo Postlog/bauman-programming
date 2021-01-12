@@ -28,7 +28,7 @@ Node *tree_find_node(Tree *tree, int key)
 	return node;
 }
 
-void tree_insert(Tree *tree, int key, char *value)
+void tree_insert_node(Tree *tree, int key, char *value)
 {
 	Node *new_node = (Node *)malloc(sizeof(Node));
 	new_node->key = key;
@@ -70,7 +70,7 @@ void tree_insert(Tree *tree, int key, char *value)
 	}
 }
 
-void replace_node(Tree *tree, Node *x, Node *y)
+void tree_replace_node(Tree *tree, Node *x, Node *y)
 {
 	if(tree->root == x)
 	{
@@ -119,7 +119,7 @@ Node *succ(Node *node)
 	}
 }
 
-void increase_tree_count(Tree *tree, int key)
+void tree_increase_branch_count(Tree *tree, int key)
 {
 	Node *node = tree->root;
 	while(node && node->key != key)
@@ -130,46 +130,46 @@ void increase_tree_count(Tree *tree, int key)
 	}
 }
 
-void clear_subtree(Node *node)
+void tree_clear_node(Node *node)
 {
 	if(node->right)
-		clear_subtree(node->right);
+		tree_clear_node(node->right);
 	if(node->left)
-		clear_subtree(node->left);
+		tree_clear_node(node->left);
 	free(node->value);
 	free(node);
 }
 
-void clear_tree(Tree tree)
+void tree_clear(Tree tree)
 {
 	if(tree.root)
-		clear_subtree(tree.root);
+		tree_clear_node(tree.root);
 }
 
-void delete(Tree *tree, int key)
+void tree_delete_node(Tree *tree, int key)
 {
 	Node *node = tree_find_node(tree, key);
-	increase_tree_count(tree, key);
+	tree_increase_branch_count(tree, key);
 
-	if(!node->left && !node->right) replace_node(tree, node, NULL);
-	else if(!node->left) replace_node(tree, node, node->right);
-	else if(!node->right) replace_node(tree, node, node->left);
+	if(!node->left && !node->right) tree_replace_node(tree, node, NULL);
+	else if(!node->left) tree_replace_node(tree, node, node->right);
+	else if(!node->right) tree_replace_node(tree, node, node->left);
 	else
 	{
 		Node *y = succ(node);
-		replace_node(tree, y, y->right);
+		tree_replace_node(tree, y, y->right);
 		node->left->parent = y;
 		y->left = node->left;
 		if(node->right) node->right->parent = y;
 		y->right = node->right;
 		y->count = node->count - 1;
-		replace_node(tree, node, y);
+		tree_replace_node(tree, node, y);
 	}
 	free(node->value);
 	free(node);	
 }
 
-Node *search(Tree *tree, int rank)
+Node *tree_search_node_by_rank(Tree *tree, int rank)
 {
 	Node *node = tree->root;
 	while(node)
@@ -197,7 +197,7 @@ Node *search(Tree *tree, int rank)
 }
 
 int ACTIONS_COUNT = 4;
-char *ACTIONS[] = {"INSERT", "SEARCH", "LOOKUP", "DELETE"};
+char *ACTIONS[] = {"INSERT", "tree_search_node_by_rank", "LOOKUP", "tree_delete_node"};
 
 int action_index(char *action)
 {
@@ -224,11 +224,11 @@ void main()
 				scanf("%d", &x);
 				word = (char *)malloc(sizeof(char) * 10);
 				scanf("%s", word);
-				tree_insert(&tree, x, word);
+				tree_insert_node(&tree, x, word);
 				break;
 			case 1:
 				scanf("%d", &x);
-				printf("%s\n", search(&tree, x)->value);
+				printf("%s\n", tree_search_node_by_rank(&tree, x)->value);
 				break;
 			case 2:
 				scanf("%d", &x);
@@ -236,10 +236,10 @@ void main()
 				break;
 			case 3:
 				scanf("%d", &x);
-				delete(&tree, x);
+				tree_delete_node(&tree, x);
 				break;
 		}
 	}
 
-	clear_tree(tree);
+	tree_clear(tree);
 }

@@ -32,7 +32,7 @@ void swap(PriorityQueueUnit *a, PriorityQueueUnit *b)
     *b = t;
 }
 
-int sift_down(PriorityQueueUnit *list, int size)
+int priority_queue_sift_down(PriorityQueueUnit *list, int size)
 {
     int capacity = 0, i = 0;
     while (i < size / 2)
@@ -54,22 +54,22 @@ int sift_down(PriorityQueueUnit *list, int size)
     return capacity;
 }
 
-void init_priority_queue(PriorityQueue *q, int capacity)
+void priority_queue_init(PriorityQueue *q, int capacity)
 {
     q->capacity = capacity;
     q->count = 0;
     q->heap = (PriorityQueueUnit *)malloc(sizeof(PriorityQueueUnit) * capacity);
 }
 
-PriorityQueueUnit pop(PriorityQueue *q)
+PriorityQueueUnit priority_queue_pop(PriorityQueue *q)
 {
     PriorityQueueUnit x = q->heap[0];
     q->heap[0].priority = INT_MIN;
-    q->count = sift_down(q->heap, q->capacity);
+    q->count = priority_queue_sift_down(q->heap, q->capacity);
     return x;
 }
 
-void insert(PriorityQueue *q, PriorityQueueUnit value)
+void priority_queue_insert(PriorityQueue *q, PriorityQueueUnit value)
 {
     int i = q->count;
     q->heap[i] = value;
@@ -86,14 +86,14 @@ int main() {
     int n;
     scanf("%d", &n);
     PriorityQueue queue;
-    init_priority_queue(&queue, n);
+    priority_queue_init(&queue, n);
     
     PriorityQueueUnit unit;
     unit.value = 0;
     unit.priority = 0;
 
     for(int i = 0; i < n; i++)
-        insert(&queue, unit);
+        priority_queue_insert(&queue, unit);
 
     int k;
     scanf("%d", &k);
@@ -113,7 +113,7 @@ int main() {
     {
         
         Task task = tasks[i];
-        int total_time = pop(&queue).value;
+        int total_time = priority_queue_pop(&queue).value;
         if (task.start_time > total_time)
             total_time = task.start_time;
 
@@ -123,7 +123,7 @@ int main() {
         PriorityQueueUnit unit;
         unit.value = total_time;
         unit.priority = -total_time;
-        insert(&queue, unit);
+        priority_queue_insert(&queue, unit);
     }
 
     printf("%d\n", max_total_time);
