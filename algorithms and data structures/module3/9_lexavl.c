@@ -18,52 +18,54 @@ typedef struct Tree
 
 Node *tree_find_node(Tree *tree, unsigned long key)
 {
-    Node *x = tree->root;
+    Node *node = tree->root;
 
-    while (x != NULL && x->key != key)
+    while (node && node->key != key)
     {
-        if (key < x->key) x = x->left;
-        else x = x->right;
+        if (key < node->key) node = node->left;
+        else node = node->right;
     }
-    return x;
+    return node;
 }
 
 void tree_insert_node(Tree *tree, unsigned long key, int value)
 {
-    Node *y = (Node*) malloc(sizeof(Node));
-    y->parent = NULL; y->left = NULL; y->right = NULL;
-    y->key = key;
-    y->value = value;
-    y->balance = 0;
+    Node *new_node = (Node*) malloc(sizeof(Node));
+    new_node->parent = NULL; new_node->left = NULL; new_node->right = NULL;
+    new_node->key = key;
+    new_node->value = value;
+    new_node->balance = 0;
 
-    if (tree->root == NULL) tree->root = y;
-    else
+    if (!tree->root) 
     {
-        Node *x = tree->root;
-        for (;;)
+        tree->root = new_node;
+        return;
+    }
+    Node *node = tree->root;
+    for (;;)
+    {
+        if (key < node->key)
         {
-            if (key < x->key)
+            if (node->left == NULL)
             {
-                if (x->left == NULL)
-                {
-                    x->left = y;
-                    y->parent = x;
-                    break;
-                }
-                x = x->left;
+                node->left = new_node;
+                new_node->parent = node;
+                break;
             }
-            else
+            node = node->left;
+        }
+        else
+        {
+            if (node->right == NULL)
             {
-                if (x->right == NULL)
-                {
-                    x->right = y;
-                    y->parent = x;
-                    break;
-                }
-                x = x->right;
+                node->right = new_node;
+                new_node->parent = node;
+                break;
             }
+            node = node->right;
         }
     }
+    
 }
 
 Tree *tree_replace_node(Tree *tree, Node *x, Node *y)
@@ -105,17 +107,17 @@ Node *avl_tree_rotate_left(Tree *tree, Node *x)
     tree_replace_node(tree, x, y);
     Node *b = y->left;
 
-    if (b != NULL) b->parent = x;
+    if(b) b->parent = x;
     x->right = b;
     x->parent = y;
     y->left = x;
 
     x->balance--;
-    if (y->balance > 0)
+    if(y->balance > 0)
         x->balance = x->balance - y->balance;
 
     y->balance--;
-    if (x->balance < 0)
+    if(x->balance < 0)
         y->balance = y->balance + x->balance;
 }
 
@@ -125,17 +127,17 @@ Node *avl_tree_rotate_right(Tree *tree, Node *x)
     tree_replace_node(tree, x, y);
     Node *b = y->right;
 
-    if (b != NULL) b->parent = x;
+    if(b) b->parent = x;
     x->left = b;
     x->parent = y;
     y->right = x;
 
     x->balance++;
-    if (y->balance < 0)
+    if(y->balance < 0)
         x->balance = x->balance - y->balance;
 
     y->balance++;
-    if (x->balance > 0)
+    if(x->balance > 0)
         y->balance = y->balance + x->balance;
 }
 
@@ -150,7 +152,7 @@ Node *avl_tree_insert_node(Tree *tree, unsigned long key, int value)
     for (;;)
     {
         x = a->parent;
-        if (x == NULL) break;
+        if (!x) break;
         if (a == x->left)
         {
             x->balance--;
@@ -182,7 +184,7 @@ unsigned long hash(char *str)
     unsigned long hash = 5381;
     int c;
 
-    while (c = *str++)
+    while(c = *str++)
         hash = ((hash << 5) + hash) + c;
 
     return hash;
