@@ -4,3 +4,5 @@
 !*.rkt
 !*.png
 !*.jpg
+!*.sh
+!*.js
