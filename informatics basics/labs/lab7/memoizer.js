@@ -1,11 +1,8 @@
 function memoize(func) {
 	let memo = {}
-
-	return function() {
-		let stringArguments = Array.from(arguments).toString()
-		
-		if(stringArguments in memo) return memo[stringArguments]
-		else return memo[stringArguments] = func(...arguments), memo[stringArguments]
+	return function(...args) {
+		if(args in memo) return memo[args]
+		else return memo[args] = func(...args), memo[args]
 	}
 }
 
