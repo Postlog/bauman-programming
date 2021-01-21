@@ -4,30 +4,43 @@ import argparse
 import sys
 
 
+def _get_file_data(file):
+	contents = file.read()
+	return [contents.count('\n'),  	#  lines count
+			len(contents.split()), 	#  words count
+			len(contents), 			#  chars count 
+			len(contents.encode('utf-8'))]     	#  bytes count
+
+
+def _get_file_name(file):
+	if hasattr(file, 'custom_name'):
+		return file.custom_name
+	else:
+		return file.name
+
+
 def wc(files, params):
+	if type(files) != list:
+		files = [files]
+
 	totals = [0] * len(params)
-	align = 8
 	results = []
 	for file in files:
-		contents = file.read()
-		results.append([contents.count('\n'),  	#  lines count
-						len(contents.split()), 	#  words count
-						len(contents), 			#  chars count 
-						file.seek(0, 2)])       #  bytes count
+		results.append(_get_file_data(file))
 	
 		
-		for i in range(len(totals)):
-			totals[i] += results[-1][-(len(params) - i)]
+		for i in range(len(params)):
+			totals[i] += results[-1][i]
 
 	align = 0
 	for total in totals:
-		numbers_count = len(str(total))
-		if numbers_count > align:
-			align = numbers_count
+		number_length = len(str(total))
+		if number_length > align:
+			align = number_length
 
 	if not any(params):
 		for i, result in enumerate(results):
-			print(f'{result[0]:>{align}} {result[1]:>{align}} {result[3]:>{align}}', files[i].name)
+			print(f'{result[0]:>{align}} {result[1]:>{align}} {result[3]:>{align}}', _get_file_name(files[i]))
 		if len(files) > 1:
 			print(f'{totals[0]:>{align}} {totals[1]:>{align}} {totals[3]:>{align}}', 'total')
 	else:
@@ -35,12 +48,13 @@ def wc(files, params):
 			for i, result_value in enumerate(result):
 				if params[i]:
 					print(f'{result_value:>{align}}', end=' ')
-			print(files[file_i].name)
+			print(_get_file_name(files[file_i]))
 		if len(files) > 1:
 			for i, total in enumerate(totals):
 				if params[i]:
 					print(f'{total:>{align}}', end=' ')
 			print('total')
+
 
 def parse_unknowns(parser, unknowns):
 	files = []
@@ -65,6 +79,7 @@ if __name__ == '__main__':
 	data = None
 	if not sys.stdin.isatty():
 		data = sys.stdin
+		data.custom_name = ''
 
 	if len(files) != 0:
 		data = files

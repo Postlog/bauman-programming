@@ -6,8 +6,9 @@ import re
 
 
 def get_contents(textio):
-	if type(textio) != type([]):
+	if type(textio) != list:
 		textio = [textio]
+		
 	texts = {}
 	for io in textio:
 		texts[io.name] = io.read().strip()
