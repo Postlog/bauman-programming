@@ -2,7 +2,7 @@ def _is_word_part(char):
 	return char.isalpha() or char.isdigit() or char in ('`', '\'', '’', '-')
 
 
-def _get_words_from_line(line_index, line):
+def _get_words_from_line(line):
 	word_start = -1
 	word = ''
 
@@ -29,6 +29,6 @@ def get_dictionary(sources):
 	dictionary = {}
 	for source in sources:
 		for line_index, line in enumerate(source.read().split('\n'), 1):
-			for start_index, word in _get_words_from_line(line_index, line):
+			for start_index, word in _get_words_from_line(line):
 				dictionary[(line_index, start_index)] = word
 	return dictionary

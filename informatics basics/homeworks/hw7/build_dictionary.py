@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from dict_utils import get_dictionary
+from dictionary_utils import get_dictionary
 
 
 parser = argparse.ArgumentParser(add_help=False)
@@ -29,9 +29,9 @@ if __name__ == '__main__':
 		if word not in words:
 			dictionary_representation += f'{word}\n'
 			words.append(word)
-			
+
 	if args.o:
 		args.o.write(dictionary_representation)
 	else:
-		with open('dictionary_representation.txt', 'w+') as file:
+		with open('dictionary.txt', 'w+') as file:
 			file.write(dictionary_representation)
