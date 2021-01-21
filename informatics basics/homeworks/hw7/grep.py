@@ -8,7 +8,7 @@ import re
 def get_contents(textio):
 	if type(textio) != list:
 		textio = [textio]
-		
+
 	texts = {}
 	for io in textio:
 		texts[io.name] = io.read().strip()
@@ -22,9 +22,11 @@ def grep(contents, string, ignore_case, display_line_number, regexp, max_count):
 
 	if display_line_number:
 		prefix += '{line_number}:'
+
 	prefix += ' ' * 4
 	for name, text in contents.items():
 		lines = text.split('\n')
+		count = 0
 		for i, line in enumerate(lines, 1):
 			output = ''
 			if regexp is not None:
@@ -33,8 +35,13 @@ def grep(contents, string, ignore_case, display_line_number, regexp, max_count):
 			else:
 				if ignore_case and string.lower() in line.lower() or string in line:
 					output = prefix.format(filename=name, line_number=i) + line
+			
+			if max_count is not None and count == max_count:
+				break
+
 			if output:
 				print(output)
+				count += 1
 
 
 
