@@ -32,8 +32,9 @@ def grep(contents, pattern, ignore_case, display_line_number, regexp, max_count)
 				break
 
 			output = ''
-			if regexp is not None and re.findall(regexp, line):
-				output = prefix.format(filename=name, line_number=i) + line
+			if regexp is not None:
+				if re.findall(regexp, line):
+					output = prefix.format(filename=name, line_number=i) + line
 			elif ignore_case and pattern.lower() in line.lower() or pattern in line:
 				output = prefix.format(filename=name, line_number=i) + line
 
