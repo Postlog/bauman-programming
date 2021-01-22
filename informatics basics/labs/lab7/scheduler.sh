@@ -71,7 +71,7 @@ function main {
 
 	while [ 0 -eq 0 ]; do
 		if ! ps -p $PID > /dev/null 2>&1; then
-			bash $SCRIPT_PATH 1>$LOGS_FILE 2>$ERRORS_FILE & 
+			bash $SCRIPT_PATH 1>>$LOGS_FILE 2>>$ERRORS_FILE & 
 			PID=$!
 			echo "Pid: $PID"
 		else
