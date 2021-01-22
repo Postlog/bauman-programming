@@ -4,66 +4,70 @@ import argparse
 import sys
 
 
-def _get_file_data(file):
-	contents = file.read()
+def get_stream_contents_info(stream):
+	contents = stream.read()
 	return [contents.count('\n'),  	#  lines count
 			len(contents.split()), 	#  words count
 			len(contents), 			#  chars count 
 			len(contents.encode('utf-8'))]     	#  bytes count
 
 
-def _get_file_name(file):
-	if hasattr(file, 'custom_name'):
-		return file.custom_name
+def get_stream_name(stream):
+	if hasattr(stream, 'custom_name'):
+		return stream.custom_name
 	else:
-		return file.name
+		return stream.name
 
 
-def wc(files, params):
-	if type(files) != list:
-		files = [files]
+def display(elements, align, postfix):
+	for element in elements:
+		print(f'{element:>{align}}', end=' ')
+	print(postfix)
 
-	totals = [0] * len(params)
-	results = []
-	for file in files:
-		results.append(_get_file_data(file))
-	
-		
-		for i in range(len(params)):
-			totals[i] += results[-1][i]
 
-	align = 0
-	for total in totals:
-		number_length = len(str(total))
-		if number_length > align:
-			align = number_length
+def get_required_params_indexes(params):
+	indexes = []
+	for i, param in enumerate(params):
+		if param:
+			indexes.append(i)
+	return indexes
 
+
+def wc(streams, params):
 	if not any(params):
-		for i, result in enumerate(results):
-			print(f'{result[0]:>{align}} {result[1]:>{align}} {result[3]:>{align}}', _get_file_name(files[i]))
-		if len(files) > 1:
-			print(f'{totals[0]:>{align}} {totals[1]:>{align}} {totals[3]:>{align}}', 'total')
-	else:
-		for file_i, result in enumerate(results):
-			for i, result_value in enumerate(result):
-				if params[i]:
-					print(f'{result_value:>{align}}', end=' ')
-			print(_get_file_name(files[file_i]))
-		if len(files) > 1:
-			for i, total in enumerate(totals):
-				if params[i]:
-					print(f'{total:>{align}}', end=' ')
-			print('total')
+		params[0] = params[1] = params[3] = True
+
+	required_params_indexes = get_required_params_indexes(params)
+
+	totals = [0] * len(required_params_indexes)
+	results = []
+
+	for stream in streams:
+		info = get_stream_contents_info(stream)
+		required_info = [info[i] for i in required_params_indexes] 
+		
+		results.append(required_info)
+		
+		for i in range(len(totals)):
+			totals[i] += required_info[i]
+
+	align = max([len(str(total)) for total in totals])
+
+	for i, result in enumerate(results):
+		display(result, align, get_stream_name(streams[i]))
+
+	if len(streams) > 1:
+		display(totals, align, 'total')
 
 
 def parse_unknowns(parser, unknowns):
-	files = []
+	streams = []
 	for unknown in unknowns:
 		try:
-			files.append(open(unknown, 'r'))
+			streams.append(open(unknown, 'r'))
 		except:
 			sys.stderr.write(f'{__file__}: не удается открыть указанный файл {unknown}\n')
-	return files
+	return streams
 
 
 parser = argparse.ArgumentParser(add_help=False)
@@ -73,18 +77,15 @@ parser.add_argument('-w', action='store_true')
 parser.add_argument('-l', action='store_true')
 args, unknowns = parser.parse_known_args()
 
-files = parse_unknowns(parser, unknowns)
 
 if __name__ == '__main__':
-	data = None
-	if not sys.stdin.isatty():
-		data = sys.stdin
-		data.custom_name = ''
+	streams = parse_unknowns(parser, unknowns)
 
-	if len(files) != 0:
-		data = files
+	if not sys.stdin.isatty() and len(streams) == 0:
+		streams.append(sys.stdin)
+		streams[0].custom_name = '' # добавляем кастомное пустое имя, чтобы не отображать его (<stdin>) при выводе
 
-	if data is None:
+	if len(streams) == 0:
 		parser.error('Требуется указать путь до файа или передать текст в стандартный поток ввода')
 
-	wc(data, [args.l, args.w, args.m, args.c])
+	wc(streams, [args.l, args.w, args.m, args.c])

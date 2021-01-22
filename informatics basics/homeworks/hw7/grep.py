@@ -5,17 +5,14 @@ import sys
 import re
 
 
-def get_contents(textio):
-	if type(textio) != list:
-		textio = [textio]
-
-	texts = {}
-	for io in textio:
-		texts[io.name] = io.read().strip()
-	return texts
+def get_contents(streams):
+	contents = {}
+	for stream in streams:
+		contents[stream.name] = stream.read().strip()
+	return contents
 
 
-def grep(contents, string, ignore_case, display_line_number, regexp, max_count):
+def grep(contents, pattern, ignore_case, display_line_number, regexp, max_count):
 	prefix = ''
 	if len(contents) > 1:
 		prefix = '{filename}:'
@@ -24,20 +21,21 @@ def grep(contents, string, ignore_case, display_line_number, regexp, max_count):
 		prefix += '{line_number}:'
 
 	prefix += ' ' * 4
+
 	for name, text in contents.items():
 		lines = text.split('\n')
 		count = 0
+
 		for i, line in enumerate(lines, 1):
-			output = ''
-			if regexp is not None:
-				if len(re.findall(regexp, line)) != 0:
-					output = prefix.format(filename=name, line_number=i) + line
-			else:
-				if ignore_case and string.lower() in line.lower() or string in line:
-					output = prefix.format(filename=name, line_number=i) + line
-			
+
 			if max_count is not None and count == max_count:
 				break
+
+			output = ''
+			if regexp is not None and re.findall(regexp, line):
+				output = prefix.format(filename=name, line_number=i) + line
+			elif ignore_case and pattern.lower() in line.lower() or pattern in line:
+				output = prefix.format(filename=name, line_number=i) + line
 
 			if output:
 				print(output)
@@ -46,17 +44,17 @@ def grep(contents, string, ignore_case, display_line_number, regexp, max_count):
 
 
 def parse_unknowns(parser, unknowns):
-	files = []
+	streams = []
 	pattern = None
 	for unknown in unknowns:
 		try:
-			files.append(open(unknown, 'r'))
+			streams.append(open(unknown, 'r'))
 		except:
 			if pattern is None:
 				pattern	= unknown
 			else:
 				sys.stderr.write(f'{__file__}: не удается открыть указанный файл {unknown}\n')
-	return pattern, files
+	return pattern, streams
 
 
 parser = argparse.ArgumentParser()
@@ -66,23 +64,19 @@ parser.add_argument('-e', dest='regexp', type=str)
 parser.add_argument('-m', dest='max_count', type=int)
 
 args, unknowns = parser.parse_known_args()
-pattern, files = parse_unknowns(parser, unknowns)
+
 
 if __name__ == '__main__':
-	data = None
-	if not sys.stdin.isatty():
-		data = sys.stdin
+	pattern, streams = parse_unknowns(parser, unknowns)
+ 	
+	if not sys.stdin.isatty() and len(streams) == 0:
+		streams.append(sys.stdin)
 
-	if len(files) != 0:
-		data = files
-
-	if data is None:
+	if len(streams) == 0:
 		parser.error('Требуется указать путь до файа или передать текст в стандартный поток ввода')
 
-	if args.regexp is None:
-		if pattern is None:
-			parser.error('Требуется передать выражение для сопоставления')
+	if args.regexp is None and pattern is None:
+		parser.error('Требуется передать выражение для сопоставления')
 
-	contents = get_contents(data)
+	contents = get_contents(streams)
 	grep(contents, pattern, args.ignore_case, args.line_number, args.regexp, args.max_count)
-

@@ -8,7 +8,7 @@ import sys
 
 def get_tree(directories_only, path='.'):
 
-	def get_tree_rec(path):
+	def get_tree_recursive(path):
 		try:
 			fs_objects = os.listdir(path)
 		except:
@@ -22,11 +22,11 @@ def get_tree(directories_only, path='.'):
 		directories = list(filter(lambda fs_object: not os.path.isfile(os.path.join(path, fs_object)), fs_objects))
 		directory_dict = {'files': files}
 		for directory in directories:
-			directory_dict['DIRECTORY_' + directory] = get_tree_rec(os.path.join(path, directory))
+			directory_dict['_' + directory] = get_tree_recursive(os.path.join(path, directory))
 		return directory_dict
 
 
-	return { path: get_tree_rec(path or '.') }
+	return (path, get_tree_recursive(path or '.'))
 
 
 def display_tree(tree, output_path):
@@ -39,21 +39,17 @@ def display_tree(tree, output_path):
 	CONNECTOR_END = '└──'
 	LINE = '│'
 	EMPTY_LINE = ' ' * len(LINE)
-	def BOLD(text):
-		return '\033[1m' + text + '\033[0m'
+	BOLD = lambda text: '\033[1m' + text + '\033[0m'
 
-	root = list(tree.keys())[0]
-	tree = tree[root]
+	root = tree[0]
+	tree = tree[1]
 	print(BOLD(root))
+
 	def display_tree_rec(tree, prefix):
 		if len(tree['files']) > 0:
 			files = tree['files']
-			try:
-				for file in files[:-1]:
-					print(prefix + CONNECTOR + SPACE + file)	
-			except:
-				print(tree)
-				sys.exit(1)
+			for file in files[:-1]:
+				print(prefix + CONNECTOR + SPACE + file)	
 
 			print(prefix  + (CONNECTOR if len(tree) > 1 else CONNECTOR_END) + SPACE + files[-1])
 
@@ -61,12 +57,13 @@ def display_tree(tree, output_path):
 			directories = list(tree.items())[1:]
 
 			for directory, directory_tree in directories[:-1]:
-				directory = "_".join(directory.split('_')[1:])
+				directory = directory[1:] #  убираем нижнее подчёркивание '_', добавленное в get_tree()
 				print(prefix + CONNECTOR + SPACE + BOLD(directory))
 				display_tree_rec(directory_tree, prefix + LINE + TREE_SPACE)
 
 			print(prefix + CONNECTOR_END + SPACE + BOLD( "_".join(directories[-1][0].split('_')[1:])))
 			display_tree_rec(directories[-1][1], prefix + TREE_SPACE + EMPTY_LINE)
+
 
 	display_tree_rec(tree, '')
 
@@ -91,15 +88,16 @@ def process_path_argument(parser, argument):
 
 parser = argparse.ArgumentParser(add_help=False)
 parser.add_argument('-d', dest='directories_only', action='store_true')
-parser.add_argument('-o', dest='output_path', type=lambda x: process_path_argument(parser, x))
+parser.add_argument('-o', dest='output_path', type=lambda path: process_path_argument(parser, path))
 args, unknowns = parser.parse_known_args()
 
 if __name__ == '__main__':
+	
 	for path in unknowns:
 		if not os.path.exists(path) or not os.path.isdir(path) or not os.access(path, os.R_OK):
 			sys.stderr.write(f'{__file__}: не удалось открыть директорию {path}\n')
-			continue
-		display_tree(get_tree(args.directories_only, path), args.output_path)
+		else:
+			display_tree(get_tree(args.directories_only, path), args.output_path)
 	
 	if len(unknowns) == 0:
 		display_tree(get_tree(args.directories_only), args.output_path)
