@@ -45,7 +45,7 @@ def display_tree(tree, output_path):
 	tree = tree[1]
 	print(BOLD(root))
 
-	def display_tree_rec(tree, prefix):
+	def display_tree_recursive(tree, prefix):
 		if len(tree['files']) > 0:
 			files = tree['files']
 			for file in files[:-1]:
@@ -59,13 +59,13 @@ def display_tree(tree, output_path):
 			for directory, directory_tree in directories[:-1]:
 				directory = directory[1:] #  убираем нижнее подчёркивание '_', добавленное в get_tree()
 				print(prefix + CONNECTOR + SPACE + BOLD(directory))
-				display_tree_rec(directory_tree, prefix + LINE + TREE_SPACE)
+				display_tree_recursive(directory_tree, prefix + LINE + TREE_SPACE)
 
 			print(prefix + CONNECTOR_END + SPACE + BOLD( "_".join(directories[-1][0].split('_')[1:])))
-			display_tree_rec(directories[-1][1], prefix + TREE_SPACE + EMPTY_LINE)
+			display_tree_recursive(directories[-1][1], prefix + TREE_SPACE + EMPTY_LINE)
 
 
-	display_tree_rec(tree, '')
+	display_tree_recursive(tree, '')
 
 
 def process_path_argument(parser, argument):
