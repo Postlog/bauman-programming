@@ -8,7 +8,7 @@ import (
 func main() {
 	s := input.Gets()
 
-	var ( 
+	var (
 		c1 rune
 		c2 rune
 	)

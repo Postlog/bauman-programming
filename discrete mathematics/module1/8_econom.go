@@ -15,8 +15,8 @@ func main() {
 		if el == '(' {
 			indexStack = append(indexStack, i)
 		} else if el == ')' {
-			expressionSlice := string(runes[indexStack[len(indexStack) - 1] : i + 1])
-			indexStack = indexStack[:len(indexStack) - 1]
+			expressionSlice := string(runes[indexStack[len(indexStack)-1] : i+1])
+			indexStack = indexStack[:len(indexStack)-1]
 			_, ok := calculated[expressionSlice]
 			if !ok {
 				calculated[expressionSlice] = true

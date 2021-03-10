@@ -87,7 +87,7 @@ func fracify(m [][]int, n int) [][]Frac {
 
 	for i := 0; i < n; i++ {
 		fracm = append(fracm, []Frac{})
-		for j := 0; j < n + 1; j++ {
+		for j := 0; j < n+1; j++ {
 			fracm[i] = append(fracm[i], Frac{m[i][j], 1})
 		}
 	}
@@ -96,7 +96,7 @@ func fracify(m [][]int, n int) [][]Frac {
 }
 
 func triangulate(m [][]Frac, n int) ([]int, bool) {
-  	index := make([]int, n)
+	index := make([]int, n)
 	for i := range index {
 		index[i] = i
 	}
@@ -116,7 +116,7 @@ func triangulate(m [][]Frac, n int) ([]int, bool) {
 				index[i], index[primary_i] = index[primary_i], index[i]
 			}
 
-			primary = m[i][index[i]];
+			primary = m[i][index[i]]
 		}
 
 		if primary.a == 0 {
@@ -130,7 +130,7 @@ func triangulate(m [][]Frac, n int) ([]int, bool) {
 		m[i][n] = m[i][n].divide(primary)
 
 		for k := i + 1; k < n; k++ {
-			primary = m[k][index[i]];
+			primary = m[k][index[i]]
 			for j := 0; j < n; j++ {
 				m[k][index[j]] = m[k][index[j]].substract(m[i][index[j]].multiply(primary))
 			}
@@ -178,7 +178,7 @@ func main() {
 
 	for i := 0; i < n; i++ {
 		m = append(m, []int{})
-		for j := 0; j < n + 1; j++ {
+		for j := 0; j < n+1; j++ {
 			var v int
 			fmt.Scan(&v)
 			m[i] = append(m[i], v)

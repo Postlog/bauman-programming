@@ -16,22 +16,22 @@ func getMatrix() [][]*big.Int {
 }
 
 func fibonacci(n int) *big.Int {
-	F := power(getMatrix(), n - 1)
-	
+	F := power(getMatrix(), n-1)
+
 	return F[0][0]
 }
 
 func power(F [][]*big.Int, n int) [][]*big.Int {
 
-	if (n < 2) {
+	if n < 2 {
 		return F
 	}
 
-	F = power(F, n / 2);
-	F = multiply(F, F);
+	F = power(F, n/2)
+	F = multiply(F, F)
 
-	if (n % 2 != 0) {
-		F = multiply(F, getMatrix());
+	if n%2 != 0 {
+		F = multiply(F, getMatrix())
 	}
 
 	return F
@@ -55,7 +55,6 @@ func multiply(F [][]*big.Int, S [][]*big.Int) [][]*big.Int {
 			}
 		}
 	}
-
 
 	return R
 }
