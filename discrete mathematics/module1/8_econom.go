@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-    var expression string
+	var expression string
 	fmt.Scan(&expression)
 
 	calculated := make(map[string]bool)
