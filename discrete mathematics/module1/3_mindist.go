@@ -8,10 +8,7 @@ import (
 func main() {
 	s := input.Gets()
 
-	var (
-		c1 rune
-		c2 rune
-	)
+	var c1, c2 rune
 
 	input.Scanf("\n%c %c", &c1, &c2)
 
