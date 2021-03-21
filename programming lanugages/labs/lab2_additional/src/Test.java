@@ -10,7 +10,10 @@ public class Test {
         Universe anotherUniverse = new Universe();
         anotherUniverse.addPoint(new MaterialPoint(0, 0, 0, new Vector3(-1, 1, 0)));
 
-        System.out.println(universe.getDistance(anotherUniverse));
-        System.out.println(universe.isConverge(anotherUniverse));
+        System.out.println(universe.getDistance(anotherUniverse)); // 20
+        System.out.println(universe.isConverge(anotherUniverse)); // false
     }
 }
+
+
+
