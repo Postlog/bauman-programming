@@ -68,30 +68,6 @@ func (slice ExpressionSlice) asString() string {
 	return sliceAsString
 }
 
-func (char ExpressionChar) asString() string {
-	return string(char)
-}
-
-func (char ExpressionChar) isAlphabetic() bool {
-	return char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z'
-}
-
-func (char ExpressionChar) isNumeric() bool {
-	return char >= '0' && char <= '9'
-}
-
-func (char ExpressionChar) isSpaceCharacter() bool {
-	return char == ' ' || char == '\n' || char == '\t'
-}
-
-func (char ExpressionChar) isOperation() bool {
-	return char == '+' || char == '-' || char == '/' || char == '*'
-}
-
-func (char ExpressionChar) isBracket() bool {
-	return char == '(' || char == ')'
-}
-
 func (slice ExpressionSlice) tryGetBracket() (Lexem, int) {
 	if len(slice) == 0 {
 		return UNDEFINEDLEXEM, 0
@@ -189,6 +165,29 @@ func (slice ExpressionSlice) tryGetOperation() (Lexem, int){
 	return Lexem{operation, char.asString()}, 1
 }
 
+func (char ExpressionChar) asString() string {
+	return string(char)
+}
+
+func (char ExpressionChar) isAlphabetic() bool {
+	return char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z'
+}
+
+func (char ExpressionChar) isNumeric() bool {
+	return char >= '0' && char <= '9'
+}
+
+func (char ExpressionChar) isSpaceCharacter() bool {
+	return char == ' ' || char == '\n' || char == '\t'
+}
+
+func (char ExpressionChar) isOperation() bool {
+	return char == '+' || char == '-' || char == '/' || char == '*'
+}
+
+func (char ExpressionChar) isBracket() bool {
+	return char == '(' || char == ')'
+}
 
 func lexer(expr string, lexems chan Lexem) { 
 	ExpressionSlice(expr).iterate(func(exprSlice ExpressionSlice) (indexOffset int) {
