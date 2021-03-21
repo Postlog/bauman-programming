@@ -1,29 +1,29 @@
 package main
 
 import (
-  "strconv"
-  "github.com/skorobogatov/input"
-  "fmt"
+	"fmt"
+	"github.com/skorobogatov/input"
+	"strconv"
 )
 
 type Tag int
 
-type Lexem struct { 
-    Tag 
-    Image string 
+type Lexem struct {
+	Tag
+	Image string
 }
 
-const ( 
-    ERROR Tag = 1 << iota  // Неправильная лексема 
-    NUMBER                 // Целое число 
-    VAR                    // Имя переменной 
-    PLUS                   // Знак + 
-    MINUS                  // Знак - 
-    MUL                    // Знак * 
-    DIV                    // Знак / 
-    OBRACKET               // Левая круглая скобка 
-    CBRACKET               // Правая круглая скобка 
-    UNDEFINED
+const (
+	ERROR    Tag = 1 << iota
+	NUMBER
+	VAR
+	PLUS
+	MINUS
+	MUL
+	DIV
+	OBRACKET
+	CBRACKET
+	UNDEFINED
 )
 
 var UNDEFINEDLEXEM = Lexem{UNDEFINED, ""}
@@ -31,7 +31,7 @@ var UNDEFINEDLEXEM = Lexem{UNDEFINED, ""}
 type ExpressionChar rune
 type ExpressionSlice []ExpressionChar
 
-func (slice ExpressionSlice) iterate(action func (exprSlice ExpressionSlice) int) {
+func (slice ExpressionSlice) iterate(action func(exprSlice ExpressionSlice) int) {
 	var offset int
 	for i := 0; i < len(slice); {
 		if slice[i] == ' ' || slice[i] == '\n' || slice[i] == '\t' {
@@ -48,7 +48,7 @@ func (slice ExpressionSlice) iterate(action func (exprSlice ExpressionSlice) int
 	}
 }
 
-func (slice ExpressionSlice) iterateEvery(action func (char ExpressionChar) bool) {
+func (slice ExpressionSlice) iterateEvery(action func(char ExpressionChar) bool) {
 	for i := 0; i < len(slice); i++ {
 		if slice[i] == ' ' || slice[i] == '\n' || slice[i] == '\t' {
 			continue
@@ -96,7 +96,7 @@ func (slice ExpressionSlice) tryGetVariableName() (Lexem, int) {
 
 	offset := 0
 
-	slice.iterateEvery(func (char ExpressionChar) bool {
+	slice.iterateEvery(func(char ExpressionChar) bool {
 		if !char.isAlphabetic() && !char.isNumeric() {
 			return false // break from iteration loop
 		}
@@ -120,7 +120,7 @@ func (slice ExpressionSlice) tryGetNumericConstant() (Lexem, int) {
 	offset := 0
 	wrongLexem := false
 
-	slice.iterateEvery(func (char ExpressionChar) bool {
+	slice.iterateEvery(func(char ExpressionChar) bool {
 		if char.isAlphabetic() && !wrongLexem {
 			wrongLexem = true
 		}
@@ -140,7 +140,7 @@ func (slice ExpressionSlice) tryGetNumericConstant() (Lexem, int) {
 	}
 }
 
-func (slice ExpressionSlice) tryGetOperation() (Lexem, int){
+func (slice ExpressionSlice) tryGetOperation() (Lexem, int) {
 	if len(slice) == 0 {
 		return UNDEFINEDLEXEM, 0
 	}
@@ -157,7 +157,7 @@ func (slice ExpressionSlice) tryGetOperation() (Lexem, int){
 	case '-':
 		operation = MINUS
 	case '*':
-		operation = MUL	
+		operation = MUL
 	case '/':
 		operation = DIV
 	}
@@ -189,14 +189,14 @@ func (char ExpressionChar) isBracket() bool {
 	return char == '(' || char == ')'
 }
 
-func lexer(expr string, lexems chan Lexem) { 
+func lexer(expr string, lexems chan Lexem) {
 	ExpressionSlice(expr).iterate(func(exprSlice ExpressionSlice) (indexOffset int) {
 		var (
-			lexem Lexem
+			lexem  Lexem
 			offset int
 		)
 
-		if lexem, offset = exprSlice.tryGetBracket(); offset > 0  {
+		if lexem, offset = exprSlice.tryGetBracket(); offset > 0 {
 			lexems <- lexem
 			indexOffset = offset
 		} else if lexem, offset = exprSlice.tryGetVariableName(); offset > 0 {
@@ -218,7 +218,6 @@ func lexer(expr string, lexems chan Lexem) {
 	close(lexems)
 }
 
-
 func analyzer(lexems chan Lexem) (result int, ok bool) {
 	defer func() {
 		if x := recover(); x != nil {
@@ -226,15 +225,15 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 			ok = false
 		}
 	}()
-	
-	var parseExpression func (bool, int, bool) int
-	var parseTerm func (bool, int) int
-	var parseFactor func () int
+
+	var parseExpression func(bool, int, bool) int
+	var parseTerm func(bool, int) int
+	var parseFactor func() int
 
 	variables := make(map[string]int)
 	watchedLexem := UNDEFINEDLEXEM
 
-	watchLexem := func () Lexem {
+	watchLexem := func() Lexem {
 		if watchedLexem != UNDEFINEDLEXEM {
 			return watchedLexem
 		}
@@ -244,7 +243,7 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 		return lexem
 	}
 
-	getLexem := func () Lexem {
+	getLexem := func() Lexem {
 		if watchedLexem == UNDEFINEDLEXEM {
 			return <-lexems
 		}
@@ -254,20 +253,20 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 		return lexem
 	}
 
-	hasLexems := func () bool {
+	hasLexems := func() bool {
 		if watchedLexem == UNDEFINEDLEXEM {
 			lexem, ok := <-lexems
 			if !ok {
 				return false
 			}
 			watchedLexem = lexem
-			return true			
+			return true
 		}
 
 		return true
 	}
 
-	parseExpression = func (recursiveCall bool, term int, inBrackets bool) int {
+	parseExpression = func(recursiveCall bool, term int, inBrackets bool) int {
 		var T int
 		if recursiveCall {
 			T = term
@@ -289,20 +288,20 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 
 		lexem := getLexem()
 
-		if lexem.Tag & (PLUS | MINUS) == 0 {
+		if lexem.Tag&(PLUS|MINUS) == 0 {
 			panic("lexem not additional operation, lexem=" + lexem.Image)
 		}
 
 		T1 := parseTerm(false, 0)
 
 		if lexem.Tag == PLUS {
-			return parseExpression(true, T + T1, inBrackets)
+			return parseExpression(true, T+T1, inBrackets)
 		} else {
-			return parseExpression(true, T - T1, inBrackets)
+			return parseExpression(true, T-T1, inBrackets)
 		}
 	}
 
-	parseTerm = func (recursiveCall bool, factor int) int {
+	parseTerm = func(recursiveCall bool, factor int) int {
 		var F int
 		if recursiveCall {
 			F = factor
@@ -310,12 +309,11 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 			F = parseFactor()
 		}
 
-
 		if !hasLexems() {
 			return F
 		}
 
-		if watchLexem().Tag & (MUL | DIV) == 0 {
+		if watchLexem().Tag&(MUL|DIV) == 0 {
 			return F
 		}
 
@@ -324,13 +322,13 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 		F1 := parseFactor()
 
 		if lexem.Tag == MUL {
-			return parseTerm(true, F * F1)
+			return parseTerm(true, F*F1)
 		} else {
-			return parseTerm(true, F / F1)
+			return parseTerm(true, F/F1)
 		}
 	}
 
-	parseFactor = func () int {
+	parseFactor = func() int {
 		lexem := getLexem()
 
 		switch lexem.Tag {
@@ -343,7 +341,7 @@ func analyzer(lexems chan Lexem) (result int, ok bool) {
 		case NUMBER:
 			value, _ := strconv.Atoi(lexem.Image)
 			return value
-		
+
 		case OBRACKET:
 			result := parseExpression(false, 0, true)
 			if !hasLexems() || getLexem().Tag != CBRACKET {
