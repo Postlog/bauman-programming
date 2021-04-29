@@ -9,6 +9,10 @@
 !*.py
 !*.go
 !*.java
+!*.cpp
+!*.h
+*cmake*/
+*cmake*.*
 __*/
 __*.*
 test.*
