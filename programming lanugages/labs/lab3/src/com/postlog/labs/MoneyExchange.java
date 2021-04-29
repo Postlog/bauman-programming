@@ -20,7 +20,7 @@ public class MoneyExchange implements Comparable<MoneyExchange> {
 
     public static int[] makeExchange(int sum) {
         if (sum <= 0)
-            throw new IllegalArgumentException("sum argument must be greater then 0");
+            throw new IllegalArgumentException("sum argument must be greater than 0");
 
         List<Integer> exchange = new ArrayList<>();
 
@@ -33,34 +33,27 @@ public class MoneyExchange implements Comparable<MoneyExchange> {
         return exchange.stream().mapToInt(i->i).toArray();
     }
 
-
     @Override
     public int compareTo(MoneyExchange o) {
-        if (this.exchange.length > o.exchange.length) {
-            return 1;
-        } else if (this.exchange.length < o.exchange.length) {
-            return -1;
-        }
-        return 0;
+        return this.exchange.length - o.exchange.length;
     }
 
     @Override
     public String toString() {
-        StringBuilder exchangeRepresentation = new StringBuilder(this.exchange.length);
+        StringBuilder exchangeRepresentation = new StringBuilder();
         exchangeRepresentation.append("MoneyExchange{sum=");
         exchangeRepresentation.append(this.sum);
         exchangeRepresentation.append(", exchange={");
-        for(int value : this.exchange) {
-            exchangeRepresentation.append(value);
+        for(int i = 0; i < this.exchange.length - 1; i++) {
+            exchangeRepresentation.append(this.exchange[i]);
             exchangeRepresentation.append(", ");
         }
-        exchangeRepresentation.delete(exchangeRepresentation.length() - 2, exchangeRepresentation.length());
-        exchangeRepresentation.append("}}\n");
+        exchangeRepresentation.append(this.exchange[this.exchange.length - 1]);
+        exchangeRepresentation.append("}}");
         return exchangeRepresentation.toString();
     }
 
     private static int getNearestNominal(int sum) {
-
         for(int i = MoneyExchange.nominalValues.length - 1; i >= 0; i--) {
             int nominal = MoneyExchange.nominalValues[i];
             if (sum >= nominal) return nominal;
