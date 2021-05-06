@@ -14,7 +14,7 @@ type Lexem struct {
 }
 
 const (
-	ERROR    Tag = 1 << iota
+	ERROR Tag = 1 << iota
 	NUMBER
 	VAR
 	PLUS

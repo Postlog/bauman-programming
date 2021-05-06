@@ -12,13 +12,13 @@ func (array StringArray) Len() int { return len(array) }
 
 func (array StringArray) Less(i, j int) bool {
 	a, b := array[i], array[j]
-	num1, _ := strconv.Atoi(a + b) 
+	num1, _ := strconv.Atoi(a + b)
 	num2, _ := strconv.Atoi(b + a)
 	return num1 > num2
 }
 
-func (array StringArray) Swap(i, j int) { 
-	array[i], array[j] = array[j], array[i] 
+func (array StringArray) Swap(i, j int) {
+	array[i], array[j] = array[j], array[i]
 }
 
 func main() {
