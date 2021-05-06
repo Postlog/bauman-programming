@@ -72,7 +72,7 @@ func (queue *PriorityQueue) SiftDown() {
 	}
 }
 
-func (queue *PriorityQueue) decreaseKey(vertex *Vertex, key int) {
+func (queue *PriorityQueue) DecreaseKey(vertex *Vertex, key int) {
 	i := vertex.Index
 	vertex.Weight = key
 	for ; i > 0 && queue.Heap[(i-1)/2].TotalWeight > key; i = (i - 1) / 2 {
@@ -100,7 +100,7 @@ func Dijkstra(queue PriorityQueue) {
 		vertex.Index = -1
 		for _, u := range vertex.Edges {
 			if u.Index != -1 && relax(vertex, u) {
-				queue.decreaseKey(u, u.TotalWeight)
+				queue.DecreaseKey(u, u.TotalWeight)
 			}
 		}
 	}
