@@ -73,7 +73,6 @@ void draw(cv::Mat& image, std::vector<cv::Point> points) {
 	}
 }
 
-
 int main()
 {
 	auto net = getNet();
