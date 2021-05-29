@@ -16,7 +16,7 @@ const int HAND_MARKS_PAIRS[20][2] = {
 };
 
 cv::dnn::Net getNet() {
-	return cv::dnn::readNet("hand/pose_iter_102000.caffemodel", "hand/pose_deploy.prototxt");
+	return cv::dnn::readNet("models/pose_iter_102000.caffemodel", "models/pose_deploy.prototxt");
 }
 
 std::vector<cv::Point> getPoints(const cv::Mat& image, cv::dnn::Net& net, float threshold = 0.1) {

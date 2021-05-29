@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-
+// номер 65
 template <typename T>
 class Curve {
 private:
