@@ -12,10 +12,14 @@
 !*.cpp
 !*.h
 !*.py
+!*.html
+!*.css
 !*.prototxt
 !*.caffemodel
 !*.gitignore
 !*.gitattributes
+!*.mod
+!*.sum
 .*/
 *cmake*/
 *cmake*.*

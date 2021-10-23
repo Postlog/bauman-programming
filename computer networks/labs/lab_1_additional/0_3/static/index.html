@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Posts</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Calibri;
+        }
+
+        h1.title {
+            background-color: aliceblue;
+            padding: 20px 60px;
+        }
+
+        .root {
+            max-width: 1170px;
+            padding: 0px 15px;
+            margin: 0 auto;
+        }
+
+        p.posts-count {
+            font-style: italic;
+            padding: 10px 0px;
+        }
+
+        .post:not(:last-child) {
+            margin-bottom: 30px;
+        }
+
+        .post__title {
+            margin-bottom: 10px;
+        }
+
+        .post__description {
+            margin-left: 15px;
+            margin-bottom: 20px;
+        }
+
+        .post__description img {
+            width: 30%;
+        }
+
+        a.post__link {
+            text-decoration: none;
+            background-color: cornflowerblue;
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 3px;
+            transition-duration: .1s;
+        }
+
+        a.post__link:hover {
+            opacity: .8;
+        }
+
+    </style>
+</head>
+<body>
+<h1 class="title">{{.Title}}</h1>
+<div class="root">
+    <p class="posts-count">Всего публикаций: {{.PostsCount}}</p>
+    <div class="posts">{{.Posts}}</div>
+</div>
+
+</body>
+</html>

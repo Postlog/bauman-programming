@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frame</title>
+    <style>
+        html {
+            overflow: hidden;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        iframe {
+            width: 80%;
+            height: 80%;
+        }
+    </style>
+</head>
+<body>
+<script>
+    const url = new URL(location.href)
+    const src = url.searchParams.get('url')
+    const iframe = document.createElement('iframe')
+    iframe.setAttribute('src', "https://" + src)
+    document.body.appendChild(iframe)
+</script>
+</body>
+</html>

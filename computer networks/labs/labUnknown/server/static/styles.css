@@ -1,0 +1,63 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-size: 14px;
+    font-family: Calibri, sans-serif;
+}
+
+header {
+    width: 100%;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    background-color: azure;
+}
+
+header > p {
+    font-size: 1.3rem;
+}
+
+header p span#status {
+    color: #777;
+    font-style: italic;
+}
+
+section {
+    max-width: 1170px;
+    padding: 0 15px;
+}
+
+form#main-form {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+form#main-form .input {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+form#main-form .input p {
+    margin-right: 10px;
+}
+
+form#main-form .checkboxes {
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+form#main-form #submit {
+    margin-left: 20px;
+    width: 50px;
+    height: 30px;
+}
+
+p#output {
+    font-family: "Courier New", monospace;
+}

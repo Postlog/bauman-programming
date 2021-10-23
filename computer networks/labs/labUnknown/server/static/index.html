@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="styles.css">
+    <title>Utils</title>
+</head>
+<body>
+<header>
+    <p>Статус: <span id="status"></span></p>
+</header>
+<section>
+    <form id="main-form" action="/applicetion">
+        <div class="input">
+            <p>Хост (с указанием протокола): </p>
+            <input id="url-input" type="text" name="url" placeholder="https://vk.com">
+        </div>
+        <div class="checkboxes">
+            <label for="radio-ping">Ping</label>
+            <input type="radio" id="radio-ping" name="action-type" value="Ping" checked/>
+            <label for="radio-trace">Trace</label>
+            <input type="radio" id="radio-trace" name="action-type" value="Trace"/>
+        </div>
+        <button type="submit" id="submit">Ok</button>
+    </form>
+    <p id="output"></p>
+</section>
+<script src="script.js"></script>
+</body>
+</html>
