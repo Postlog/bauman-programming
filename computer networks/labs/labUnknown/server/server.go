@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"github.com/mgutz/logxi/v1"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -167,7 +166,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	logger.SetLevel(log.LevelAll)
+	logger.InitDefault()
 
 	http.Handle("/", http.FileServer(http.Dir("./static")))
 	http.HandleFunc("/ws", handle)

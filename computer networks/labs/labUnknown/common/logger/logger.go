@@ -7,8 +7,8 @@ import (
 
 var logger = log.New("logger")
 
-func SetLevel(level int) {
-	logger.SetLevel(level)
+func InitDefault() {
+	logger.SetLevel(log.LevelAll)
 }
 
 func formatLogMessage(remoteAddr string, message string, a ...interface{}) string {

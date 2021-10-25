@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/mgutz/logxi/v1"
 	"net/http"
 	"net/url"
 	"os/exec"
@@ -136,7 +135,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/", handler)
-	logger.SetLevel(log.LevelAll)
+	logger.InitDefault()
 
 	if err := http.ListenAndServe(":"+Port, nil); err != nil {
 		panic("Неожиданная ошибка: " + err.Error())
