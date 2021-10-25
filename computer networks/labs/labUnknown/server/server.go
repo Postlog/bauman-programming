@@ -169,7 +169,7 @@ func handle(w http.ResponseWriter, r *http.Request) {
 func main() {
 	logger.SetLevel(log.LevelAll)
 
-	http.Handle("/", http.FileServer(http.Dir("./1/server/static")))
+	http.Handle("/", http.FileServer(http.Dir("./static")))
 	http.HandleFunc("/ws", handle)
 
 	err := http.ListenAndServe(":"+Port, nil)

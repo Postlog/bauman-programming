@@ -59,11 +59,11 @@ func runCommand(command *exec.Cmd) (string, bool) {
 }
 
 func trace(parsedURL *url.URL) (string, bool) {
-	return runCommand(exec.Command("tracert", "-h", "10", parsedURL.Host))
+	return runCommand(exec.Command("traceroute", parsedURL.Host))
 }
 
 func ping(parsedURL *url.URL) (string, bool) {
-	return runCommand(exec.Command("ping", "-n", "5", parsedURL.Host))
+	return runCommand(exec.Command("ping", "-c", "5", parsedURL.Host))
 }
 
 func parseURLParams(conn *Connection) (info ActionInfo, success bool) {
