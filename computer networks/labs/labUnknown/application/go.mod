@@ -5,11 +5,7 @@ go 1.17
 replace utils/common/logger => ../common/logger
 
 require (
-	github.com/mgutz/logxi v0.0.0-20161027140823-aebf8a7d67ab
 	utils/common/logger v0.0.0-00010101000000-000000000000
-)
-
-require (
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
