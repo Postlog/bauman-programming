@@ -59,7 +59,6 @@ func closeAndLog(connection *Connection, message string) {
 }
 
 func runApplication(actionType int, parsedURL *url.URL) (string, bool) {
-
 	applicationServerURL := fmt.Sprintf(
 		"http://127.0.0.1:%s?type=%d&url=%s",
 		ApplicationServerPort,

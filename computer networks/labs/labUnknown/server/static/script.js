@@ -19,7 +19,7 @@ function generateOutput() {
         if (response === null) {
             output += 'Обработка...\n\n'
         } else {
-            output += '---------------------'
+            output += '---------------------\n'
             output += response
             output += '---------------------\n\n'
         }
