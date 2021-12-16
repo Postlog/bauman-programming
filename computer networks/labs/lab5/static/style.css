@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    font-size: 14px;
+    font-family: sans-serif;
+    font-weight: normal;
+    font-style: normal;
+}
+
+header {
+    width: 100%;
+    padding: 10px 15px;
+    color: #696969;
+    background-color: #dcfcff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header #connect-button {
+    font-size: 1.15rem;
+    padding: 5px 15px;
+}
+
+#root-container {
+    max-width: 1170px;
+    padding: 0 15px;
+    margin-top: 20px;
+}
+
+#input {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-end;
+}
+
+#input__controls {
+    margin-left: 30px;
+}
+
+#input__controls #send-button {
+    font-size: 1.1rem;
+    padding: 3px 12px;
+}

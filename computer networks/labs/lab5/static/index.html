@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>P2P Chat</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header>
+    <h3 id="connection-status">Status: <span id="connection-status__status">not connected</span></h3>
+    <button id="connect-button">Connect</button>
+</header>
+<div id="root-container">
+    <div id="input">
+        <textarea id="text" cols="30" rows="10"></textarea>
+        <div id="input__controls">
+            <button id="send-button">Send</button>
+            <p id="sending-status"></p>
+        </div>
+    </div>
+    <p id="messages"></p>
+</div>
+<script src="./main.js"></script>
+</body>
+</html>
