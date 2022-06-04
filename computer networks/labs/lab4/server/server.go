@@ -4,13 +4,15 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/mgutz/logxi/v1"
 	"hash/crc64"
-	"lab4/protocol"
 	"net"
+
+	"github.com/mgutz/logxi/v1"
+
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab4/protocol"
 )
 
-const BufferSize = 1024*1024
+const BufferSize = 1024 * 1024
 
 func parseFlags() (conn *net.UDPConn, ok bool) {
 	var (

@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/sparrc/go-ping"
 	"os"
+
+	"github.com/go-ping/ping"
 )
 
 func main() {

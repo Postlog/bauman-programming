@@ -2,12 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/sparrc/go-ping"
 	"sync"
+
+	"github.com/go-ping/ping"
 )
 
-func worker(wg *sync.WaitGroup,  host string, count int) {
-	defer wg.Done()
+func worker(host string, count int) {
 	pinger, err := ping.NewPinger(host)
 
 	if err != nil {
@@ -31,10 +31,11 @@ func worker(wg *sync.WaitGroup,  host string, count int) {
 
 func main() {
 	var (
-		host string
-		count int
+		host         string
+		count        int
 		workersCount int
 	)
+
 	fmt.Print("Введите хост: ")
 	fmt.Scan(&host)
 	fmt.Print("Введите число пакетов: ")
@@ -44,11 +45,15 @@ func main() {
 
 	var wg sync.WaitGroup
 
-	for i := 0; ; i++{
+	for i := 0; ; i++ {
 		fmt.Println("Итерация номер", i)
 		for j := 0; j < workersCount; j++ {
 			wg.Add(1)
-			go worker(&wg, host, count)
+
+			go func() {
+				worker(host, count)
+				wg.Done()
+			}()
 		}
 		wg.Wait()
 	}

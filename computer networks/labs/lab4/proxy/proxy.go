@@ -13,28 +13,28 @@ import (
 type Mode int
 
 const (
-	CLIENT_TO_SERVER Mode = 0
-	SERVER_TO_CLIENT      = 1
-	DUP                   = 2
+	ClientToServer Mode = 0
+	ServerToClient      = 1
+	DUP                 = 2
 )
 
 var failures = map[Mode]string{
-	CLIENT_TO_SERVER:       "sending message to server",
-	SERVER_TO_CLIENT:       "sending message to client",
-	CLIENT_TO_SERVER | DUP: "sending duplicate message to server",
-	SERVER_TO_CLIENT | DUP: "sending duplicate message to client",
+	ClientToServer:       "sending message to server",
+	ServerToClient:       "sending message to client",
+	ClientToServer | DUP: "sending duplicate message to server",
+	ServerToClient | DUP: "sending duplicate message to client",
 }
 
 var successes = map[Mode]string{
-	CLIENT_TO_SERVER:       "client => server",
-	SERVER_TO_CLIENT:       "server => client",
-	CLIENT_TO_SERVER | DUP: "client => server (duplicate)",
-	SERVER_TO_CLIENT | DUP: "server => client (duplicate)",
+	ClientToServer:       "client => server",
+	ServerToClient:       "server => client",
+	ClientToServer | DUP: "client => server (duplicate)",
+	ServerToClient | DUP: "server => client (duplicate)",
 }
 
 var drops = map[Mode]string{
-	CLIENT_TO_SERVER: "dropping message to server",
-	SERVER_TO_CLIENT: "dropping message to client",
+	ClientToServer: "dropping message to server",
+	ServerToClient: "dropping message to client",
 }
 
 func send(conn *net.UDPConn, addr *net.UDPAddr, data []byte, mode Mode) {
@@ -71,7 +71,7 @@ func serveClient(proxyConn, conn *net.UDPConn, addr *net.UDPAddr, loss, dup uint
 		if bytesRead, err := conn.Read(buf); err != nil {
 			log.Error("receiving message from server", "error", err, "client", addrStr)
 		} else {
-			buggySend(proxyConn, addr, buf[:bytesRead], SERVER_TO_CLIENT, loss, dup)
+			buggySend(proxyConn, addr, buf[:bytesRead], ServerToClient, loss, dup)
 		}
 	}
 }
@@ -99,7 +99,7 @@ func proxy(proxyAddr, serverAddr *net.UDPAddr, loss, dup uint) {
 					nat[clientAddrStr] = conn
 					go serveClient(proxyConn, conn, clientAddr, loss, dup)
 				}
-				buggySend(conn, serverAddr, buf[:bytesRead], CLIENT_TO_SERVER, loss, dup)
+				buggySend(conn, serverAddr, buf[:bytesRead], ClientToServer, loss, dup)
 			}
 		}
 	}
@@ -111,11 +111,13 @@ func main() {
 		loss, dup                   uint
 		helpFlag                    bool
 	)
+
 	flag.StringVar(&proxyAddrStr, "addr", "127.0.0.1:6060", "set proxy IP address and port")
 	flag.StringVar(&serverAddrStr, "server", "127.0.0.1:6000", "set server IP address and port")
 	flag.UintVar(&loss, "loss", 0, "set datagram loss rate (in %)")
 	flag.UintVar(&dup, "dup", 0, "set datagram duplication rate (in %)")
 	flag.BoolVar(&helpFlag, "help", false, "print options list")
+
 	if flag.Parse(); helpFlag {
 		fmt.Fprint(os.Stderr, "proxy [options]\n\nAvailable options:\n")
 		flag.PrintDefaults()

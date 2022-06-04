@@ -1,6 +1,6 @@
 package RPCAPI
 
-import "lab5/peer"
+import "github.com/postlog/bauman-programming/computer-networks/labs/lab5/peer"
 
 type API struct {
 	peer *peer.Peer

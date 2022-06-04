@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/mgutz/logxi/v1"
-	"lab4/protocol"
 	"net"
 	"time"
+	
+	"github.com/mgutz/logxi/v1"
+
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab4/protocol"
 )
 
 func parseFlags() (conn *net.UDPConn, ok bool) {

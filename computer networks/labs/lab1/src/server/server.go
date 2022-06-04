@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/mgutz/logxi/v1"
 	"net"
-)
 
-import "proto"
+	"github.com/mgutz/logxi/v1"
+
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab1/proto"
+)
 
 // Client - состояние клиента.
 type Client struct {
@@ -84,7 +85,7 @@ func (client *Client) handleRequest(req *proto.Request) bool {
 				errorMsg = "malformed data field"
 			} else {
 				if length := len(client.array); index.Index >= length || index.Index < 0 {
-					errorMsg = fmt.Sprintf("Индекс не соответствует диапазону [0; %d]", length - 1)
+					errorMsg = fmt.Sprintf("Индекс не соответствует диапазону [0; %d]", length-1)
 				} else {
 					client.logger.Info("performing removing", "index", index.Index)
 					client.array = append(client.array[:index.Index], client.array[index.Index+1:]...)
@@ -111,7 +112,7 @@ func (client *Client) handleRequest(req *proto.Request) bool {
 				if length == 0 {
 					errorMsg = "Массив пустой"
 				} else if indexRange.Start > indexRange.End || indexRange.Start < 0 || indexRange.End >= length {
-					errorMsg = fmt.Sprintf("Диапазон не соответствует размерам массива [0; %d]", length - 1)
+					errorMsg = fmt.Sprintf("Диапазон не соответствует размерам массива [0; %d]", length-1)
 				} else {
 					client.logger.Info("performing sum", "Start", indexRange.Start, "End", indexRange.End)
 					sum = calculateSum(client.array, indexRange.Start, indexRange.End)

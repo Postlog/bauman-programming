@@ -3,10 +3,11 @@ package peer
 import (
 	"encoding/json"
 	"errors"
-	"lab5/log"
 	"net"
 	"sync"
 	"time"
+	
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab5/log"
 )
 
 var (

@@ -3,14 +3,15 @@ package main
 import (
 	"flag"
 	"io"
-	"lab5/RPCAPI"
-	"lab5/log"
-	"lab5/peer"
 	"net/http"
 	"net/rpc"
 	"net/rpc/jsonrpc"
 	"os"
 	"os/signal"
+
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab5/RPCAPI"
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab5/log"
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab5/peer"
 )
 
 type HTTPConn struct {

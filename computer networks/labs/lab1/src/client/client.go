@@ -5,9 +5,9 @@ import (
 	"flag"
 	"fmt"
 	"net"
-)
 
-import "proto"
+	"github.com/postlog/bauman-programming/computer-networks/labs/lab1/proto"
+)
 
 // interact - функция, содержащая цикл взаимодействия с сервером.
 func interact(conn *net.TCPConn) {
@@ -22,18 +22,18 @@ func interact(conn *net.TCPConn) {
 		// Отправка запроса.
 		switch command {
 		case "quit":
-			send_request(encoder, "quit", nil)
+			sendRequest(encoder, "quit", nil)
 			return
 		case "push":
 			var value proto.ArrayValue
 			fmt.Print("value = ")
 			fmt.Scan(&value.Value)
-			send_request(encoder, "push", &value)
+			sendRequest(encoder, "push", &value)
 		case "remove":
 			var index proto.ArrayIndex
 			fmt.Print("index = ")
 			fmt.Scan(&index.Index)
-			send_request(encoder, "remove", &index)
+			sendRequest(encoder, "remove", &index)
 		case "sum":
 			var indexRange proto.Range
 			fmt.Print("start = ")
@@ -41,7 +41,7 @@ func interact(conn *net.TCPConn) {
 			fmt.Print("end = ")
 			fmt.Scan(&indexRange.End)
 
-			send_request(encoder, "sum", &indexRange)
+			sendRequest(encoder, "sum", &indexRange)
 		default:
 			fmt.Printf("error: unknown command\n")
 			continue
@@ -77,7 +77,7 @@ func interact(conn *net.TCPConn) {
 				if err := json.Unmarshal(*resp.Data, &sum); err != nil {
 					fmt.Printf("error: malformed data field in response\n")
 				} else {
-					fmt.Println("result: ", sum.Sum)
+					fmt.Println("result:", sum.Sum)
 				}
 			}
 		default:
@@ -86,12 +86,12 @@ func interact(conn *net.TCPConn) {
 	}
 }
 
-// send_request - вспомогательная функция для передачи запроса с указанной командой
+// sendRequest - вспомогательная функция для передачи запроса с указанной командой
 // и данными. Данные могут быть пустыми (data == nil).
-func send_request(encoder *json.Encoder, command string, data interface{}) {
+func sendRequest(encoder *json.Encoder, command string, data interface{}) {
 	var raw json.RawMessage
 	raw, _ = json.Marshal(data)
-	encoder.Encode(&proto.Request{command, &raw})
+	_ = encoder.Encode(&proto.Request{Command: command, Data: &raw})
 }
 
 func main() {
